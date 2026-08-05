@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — The Little Nest</title>
+<meta name="description" content="Questions about a product, a bulk order, or anything else. Mon to Fri, 9am to 5pm NZST. sales@thelittlenest.co.nz">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23FBF8F2'/%3E%3Crect%20x='9'%20y='9'%20width='14'%20height='14'%20fill='%231C1B17'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://thelittlenest.co.nz/contact">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Little Nest">
+<meta property="og:title" content="Contact — The Little Nest">
+<meta property="og:description" content="Questions about a product, a bulk order, or anything else. Mon to Fri, 9am to 5pm NZST. sales@thelittlenest.co.nz">
+<meta property="og:url" content="https://thelittlenest.co.nz/contact">
+<meta property="og:locale" content="en_NZ">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://thelittlenest.co.nz/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cream linen bedding on a farmhouse bed, morning light">
+<meta name="twitter:image" content="https://thelittlenest.co.nz/assets/img/og-image.jpg">
+<!-- Shared social card, added 6 Aug 2026. index.html had one; these four did not, while all five
+     declared twitter:card=summary_large_image — a large-image card with no image to put in it.
+     Replace with a page-specific 1200x630 frame when more photography exists. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tln.css">
+
+<!--
+  NOTE ON THE FORM — updated 5 Aug 2026
+  -------------------------------------
+  The concept faked the submit in JavaScript. This is a real <form> with real
+  validation attributes. It used to carry action="" method="post", which silently
+  swallowed every enquiry; it now carries a mailto submit as an interim measure so
+  nothing can be lost. See the comment on the <form> tag itself.
+
+  Before go-live, replace the whole block with Zoho Commerce's own form component.
+  Zoho does not expose a plain POST endpoint for this, so it cannot be wired until
+  the theme is ported. Do NOT wire it to a third-party endpoint — customer enquiries
+  need to land in the same place as everything else.
+-->
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Slim declarative bar. Facts only — no CTA chatter, per the voice rules. -->
+<div class="announce">
+  <p>Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
+</div>
+
+<header class="header">
+  <div class="container header__inner">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="nav" id="primary-nav" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="about.html">About</a>
+      <a href="sustainability.html">Sustainability</a>
+      <a href="contact.html" aria-current="page">Contact</a>
+    </nav>
+    <a href="index.html" aria-label="The Little Nest — home">
+      <span class="wordmark-text">
+        <b>The Little Nest</b>
+        <i>Take Your Comfort Home.</i>
+      </span>
+    </a>
+    <div class="header__actions">
+      <a class="account" href="/account">Sign In</a>
+      <a class="cart" href="/cart">Nest <span class="cart__count" data-cart-count>0</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="masthead">
+    <div class="container masthead__inner">
+      <div>
+        <p class="eyebrow">Get In Touch · 001</p>
+        <h1 class="serif">Contact.</h1>
+      </div>
+      <p class="masthead__lede">
+        Questions about a product, a bulk order, or anything else &mdash; we're here.
+      </p>
+    </div>
+  </section>
+
+  <section class="container contact">
+
+    <div>
+      <p class="eyebrow">Details · 002</p>
+      <dl class="details">
+        <div>
+          <dt>Email</dt>
+          <dd class="is-link"><a href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a></dd>
+        </div>
+        <div>
+          <dt>Website</dt>
+          <dd class="is-muted">www.thelittlenest.co.nz</dd>
+        </div>
+        <div>
+          <dt>Hours</dt>
+          <!-- Confirmed 9am–5pm. The brand guide's 8.30am is an error. -->
+          <dd>Mon — Fri<br><em>9am to 5pm NZST</em></dd>
+        </div>
+        <div>
+          <dt>Based In</dt>
+          <dd class="is-muted">Aotearoa New Zealand</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div>
+      <p class="eyebrow">Send A Message · 003</p>
+
+      <!--
+        FIXED 5 Aug 2026. This was action="" with method="post", which is worse than
+        broken: the browser posts the form back to contact.html, the page reloads, the
+        customer sees what looks like a successful submit, and the enquiry is gone.
+        Silent data loss on a live retail site.
+
+        Interim fix: a mailto submit. It is not elegant — it opens the customer's own
+        mail client with the fields as plain text — but it cannot lose an enquiry, and
+        it needs no backend. Reversible in one line.
+
+        Replace this at port time. Zoho Commerce renders contact forms through its own
+        platform component (Visual Editor form block / FACE form tag) rather than
+        exposing a plain POST endpoint, so there is nothing to point `action` at until
+        the theme is actually ported. Do NOT wire it to a third-party endpoint —
+        enquiries need to land where everything else does.
+      -->
+      <form class="form" action="mailto:sales@thelittlenest.co.nz" method="post" enctype="text/plain">
+        <label class="field">
+          <span>Full Name</span>
+          <input type="text" name="name" autocomplete="name" required>
+        </label>
+
+        <label class="field">
+          <span>Email Address</span>
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+
+        <label class="field">
+          <span>Phone</span>
+          <input type="tel" name="phone" autocomplete="tel" placeholder="Optional">
+        </label>
+
+        <label class="field">
+          <span>Message</span>
+          <textarea name="message" rows="4" placeholder="Tell us what you need." required></textarea>
+        </label>
+
+        <div class="form__submit">
+          <button class="btn" type="submit">Send Message →</button>
+        </div>
+      </form>
+
+      <p class="form__note">
+        We reply within one business day. For urgent enquiries, email us directly at
+        <a href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <span class="wordmark-text wordmark-text--lg">
+          <b>The Little Nest</b>
+          <i>Take Your Comfort Home.</i>
+        </span>
+        <p class="footer__blurb">
+          Hospitality bedding, towelling and accessories, supplied from Aotearoa to
+          short-stay hosts, lodges and homes that prefer their linen done properly.
+        </p>
+      </div>
+
+      <nav aria-labelledby="ft-shop">
+        <h2 id="ft-shop">Shop</h2>
+        <ul>
+          <li><a href="/categories/pillows/133974000001145139">Pillows</a></li>
+          <li><a href="/categories/pillow-mattress/133974000001145142">Pillow &amp; Mattress Protection</a></li>
+          <li><a href="/categories/bedding-quilts/133974000001145147">Bedding &amp; Quilts</a></li>
+          <li><a href="/categories/bed-linen/133974000001145150">Bed Linen</a></li>
+          <li><a href="/categories/beds-mattresses/133974000001145153">Beds &amp; Mattresses</a></li>
+          <li><a href="/categories/towels-bathrobes/133974000001145156">Towels &amp; Bathrobes</a></li>
+          <li><a href="/categories/room-accessories/133974000001145159">Room Accessories</a></li>
+          <li><a href="/categories/clearance/133974000001145162">Clearance</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="ft-explore">
+        <h2 id="ft-explore">Explore</h2>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="sustainability.html">Sustainability</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="policies.html#shipping">Shipping</a></li>
+          <li><a href="policies.html#returns">Returns</a></li>
+          <li><a href="policies.html#terms">Terms &amp; Conditions</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2>Contact</h2>
+        <a class="footer__email" href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
+        <p class="footer__meta">www.thelittlenest.co.nz</p>
+        <p class="footer__hours">Mon — Fri · 9am to 5pm NZST</p>
+      </div>
+    </div>
+
+    <div class="footer__rule"></div>
+
+    <div class="footer__base">
+      <span>© <span data-year>2026</span> The Little Nest. Aotearoa New Zealand.</span>
+      <span>Take Your Comfort Home</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/tln.js"></script>
+</body>
+</html>

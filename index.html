@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Little Nest — Take Your Comfort Home</title>
+<meta name="description" content="A hospitality linen house from Aotearoa. Beds, sheeting, towelling and room accessories built for back-to-back guest stays, finished for the bedroom you keep for yourself.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23FBF8F2'/%3E%3Crect%20x='9'%20y='9'%20width='14'%20height='14'%20fill='%231C1B17'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://thelittlenest.co.nz/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Little Nest">
+<meta property="og:title" content="The Little Nest — Take Your Comfort Home">
+<meta property="og:description" content="A hospitality linen house from Aotearoa. Beds, sheeting, towelling and room accessories built for back-to-back guest stays, finished for the bedroom you keep for yourself.">
+<meta property="og:url" content="https://thelittlenest.co.nz/">
+<meta property="og:locale" content="en_NZ">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://thelittlenest.co.nz/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cream linen bedding on a farmhouse bed, morning light">
+<meta name="twitter:image" content="https://thelittlenest.co.nz/assets/img/og-image.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tln.css">
+
+<!--
+  ============================================================================
+  THE LITTLE NEST — HOMEPAGE
+  Static rebuild of the approved concept, for Zoho Commerce.
+  Paste into: Online Store → More → Edit Code.
+
+  No React. No Babel. No build step. No cart logic, no checkout, no auth —
+  Zoho Commerce owns all of that. This file is presentation only.
+
+  ---------------------------------------------------------------------------
+  OPEN DECISIONS — search for [DECISION-n]. Each is a one-line edit.
+  ---------------------------------------------------------------------------
+  [RESOLVED] Hero badge. Confirmed by Cazsper 4 Aug 2026: keep "Est. 2024" as
+                final. Not open any further.
+  [DECISION-2]  "2,000+ Hosts Supplied" stat. Unverified placeholder, removed.
+                Restore only if a real figure is confirmed.
+  [DECISION-3]  Category names. The triptych is an editorial grouping, not the
+                store taxonomy. Links point at the handover's locked seven.
+  [DECISION-4]  Store URLs. PARTLY RESOLVED 5 Aug 2026 — do NOT treat as closed.
+                DONE: all 44 category hrefs across the five pages now carry the
+                real Zoho paths, re-verified 5 Aug against the live category
+                API. Pattern: /categories/<slug>/<numeric-id>.
+                STILL PLACEHOLDER:
+                  · href="/shop" — 8 occurrences across the five pages. The
+                    live store has NO all-products page. Online Store → Pages
+                    holds only: Home (twice), Contact, Terms & Conditions,
+                    Shipping Policy, Returns Policy. Either create an
+                    all-products page in Zoho or repoint these 8 links.
+                  · href="/shop/beds-mattresses/makers-midnight-euro-top" and
+                    its "#specs" variant (index.html). Product URLs use the
+                    same unguessable numeric-id pattern as categories and have
+                    not been captured.
+                  · href="/cart" (5) and href="/account" (5) — assumed, never
+                    verified against the live store.
+
+  IMAGERY — updated 5 Aug 2026. The nine image slots are now FILLED with the
+  AI-generated frames from preview/shots/, copied to assets/img/. They are
+  editorial interiors, not photographs of TLN's actual products, and that is
+  the deliberate decision: use AI for lifestyle imagery, real photography for
+  product shots. See TLN_MASTER_PLAN.md §4 Phase 4 — do NOT reuse these as
+  product images on product pages.
+
+  Deliberately NOT on this page: the freight rate card. It lives on
+  policies.html and in Zoho's shipping zones, so the homepage does not depend
+  on that decision. Trading hours are 9am–5pm (confirmed), not 8.30am.
+  ============================================================================
+-->
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ══ HEADER ═══════════════════════════════════════════════════════════
+     Duplicated across pages by design — in Zoho Commerce the announcement
+     bar, header and footer become theme partials, and this markup is the
+     reference for them.
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<!-- Slim declarative bar. Facts only — no CTA chatter, per the voice rules. -->
+<div class="announce">
+  <p>Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
+</div>
+
+<header class="header">
+  <div class="container header__inner">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+
+    <nav class="nav" id="primary-nav" aria-label="Primary">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="about.html">About</a>
+      <a href="sustainability.html">Sustainability</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <a href="index.html" aria-label="The Little Nest — home">
+      <span class="wordmark-text">
+        <b>The Little Nest</b>
+        <i>Take Your Comfort Home.</i>
+      </span>
+    </a>
+
+    <div class="header__actions">
+      <!-- Zoho handles authentication natively. No modal, no local accounts. -->
+      <a class="account" href="/account">Sign In</a>
+      <a class="cart" href="/cart">
+        Nest
+        <span class="cart__count" data-cart-count>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ══ 001 · HERO ═════════════════════════════════════════════════════ -->
+  <section class="container hero">
+    <div class="hero__grid">
+      <div>
+        <p class="eyebrow">Aotearoa New&nbsp;Zealand · 001</p>
+        <h1 class="serif">Take Your<br><em>Comfort</em><br>Home.</h1>
+        <div class="hero__cta">
+          <a class="btn" href="/shop">Shop the Range →</a>
+          <a class="btn btn--ghost" href="about.html">Our Standard</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="featured__media">
+          <div class="ph r-3-2 has-img"><img src="assets/img/01-hero.jpg" alt="Cream linen bedding on a farmhouse bed in a whitewashed room, morning light through a small window" width="1100" height="733" fetchpriority="high" decoding="async"></div>
+          <!-- [RESOLVED — Cazsper, 4 Aug 2026] -->
+          <span class="badge badge--hero">Est. 2024</span>
+        </div>
+        <p class="hero__caption">
+          A hospitality linen house for the bedrooms you let &mdash; and the one you keep for yourself.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 002 · BRAND STATEMENT ══════════════════════════════════════════ -->
+  <section class="container statement">
+    <div class="statement__grid">
+      <p class="eyebrow">The Brand · 002</p>
+      <div>
+        <h2 class="serif">
+          Hotel-grade linen &mdash; mattresses, sheeting and robes &mdash; once kept
+          for hospitality, now made for the room you sleep in.
+        </h2>
+        <p>
+          We supply short-stay hosts, lodges and homes that prefer their linen done properly.
+          Every product is chosen to be washed often, looked after lightly, and felt every night.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MANIFESTO MARQUEE ══════════════════════════════════════════════ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Take Your Comfort Home <i>✺</i></span>
+      <span>Hospitality Grade <i>✺</i></span>
+      <span>48 Hour NZ Despatch <i>✺</i></span>
+      <span>Free Freight Over $350 <i>✺</i></span>
+      <span>Take Your Comfort Home <i>✺</i></span>
+      <span>Hospitality Grade <i>✺</i></span>
+      <span>48 Hour NZ Despatch <i>✺</i></span>
+      <span>Free Freight Over $350 <i>✺</i></span>
+    </div>
+  </div>
+
+  <!-- ══ 003 · CATEGORY TRIPTYCH ════════════════════════════════════════ -->
+  <section class="container triptych">
+    <div class="triptych__head">
+      <p class="eyebrow">The Collection · 003</p>
+      <a class="ulink" href="/shop">View All Products →</a>
+    </div>
+
+    <h3 class="serif">Three rooms.<br><em>One standard.</em></h3>
+
+    <!-- [DECISION-3] -->
+    <div class="cards">
+      <article class="card">
+        <a href="/categories/bed-linen/133974000001145150">
+          <div class="ph r-4-5 has-img"><img src="assets/img/02-bed.jpg" alt="A made bed in a cottage bedroom, layered white sheeting under a natural linen throw" width="678" height="848" loading="lazy" decoding="async"></div>
+          <div class="card__meta"><span>01</span><span>Beds · Bedding · Bed Linen</span></div>
+          <h4 class="serif">The Bed</h4>
+          <p>Hospitality-grade bed sets and the layers that go on top of them.</p>
+          <span class="ulink">Shop the Range →</span>
+        </a>
+      </article>
+
+      <article class="card">
+        <a href="/categories/towels-bathrobes/133974000001145156">
+          <div class="ph r-4-5 has-img"><img src="assets/img/03-bath.jpg" alt="A folded stack of white and charcoal towels beside a waffle-weave robe on a brass hook" width="922" height="1152" loading="lazy" decoding="async"></div>
+          <div class="card__meta"><span>02</span><span>Towels · Bathrobes</span></div>
+          <h4 class="serif">The Bath</h4>
+          <p>Monarch white and a quiet Cardiff palette, for homes that don't want all-white.</p>
+          <span class="ulink">Shop the Range →</span>
+        </a>
+      </article>
+
+      <article class="card">
+        <a href="/categories/room-accessories/133974000001145159">
+          <div class="ph r-4-5 has-img"><img src="assets/img/04-room.jpg" alt="A wooden luggage rack with a folded throw laid across it, against a plastered wall" width="922" height="1152" loading="lazy" decoding="async"></div>
+          <div class="card__meta"><span>03</span><span>Room Accessories</span></div>
+          <h4 class="serif">The Room</h4>
+          <p>The small objects that tell a guest the host has thought of everything.</p>
+          <span class="ulink">Shop the Range →</span>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══ 004 · FEATURED PRODUCT ═════════════════════════════════════════ -->
+  <section class="featured">
+    <div class="container featured__grid">
+      <div class="featured__media">
+        <div class="ph r-4-5 has-img"><img src="assets/img/05-midnight.jpg" alt="A euro-top mattress on a low oak base, dressed in white sheeting in a farmhouse bedroom" width="922" height="1152" loading="lazy" decoding="async"></div>
+        <span class="badge badge--flag">Flagship · 001</span>
+      </div>
+
+      <div>
+        <p class="eyebrow">The Feature · 004</p>
+        <h3 class="serif">Makers Midnight<br><em>Euro-Top.</em></h3>
+        <p>
+          An eight-zone pocket spring with a quilted hospitality top &mdash; built for
+          back-to-back guest stays, finished for the bedroom you keep for yourself.
+        </p>
+
+        <dl class="specs">
+          <div class="spec"><dt>Pocket Springs</dt><dd>2 000</dd></div>
+          <div class="spec"><dt>Top Layer</dt><dd>Euro Quilt</dd></div>
+          <div class="spec"><dt>Warranty</dt><dd>10 Years</dd></div>
+          <div class="spec"><dt>From</dt><dd>$1,290 NZD</dd></div>
+        </dl>
+
+        <div class="featured__cta">
+          <a class="btn" href="/shop/beds-mattresses/makers-midnight-euro-top">Add to Nest +</a>
+          <a class="btn btn--ghost" href="/shop/beds-mattresses/makers-midnight-euro-top#specs">Product Specs →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 005 · ANCHOR PANEL ═════════════════════════════════════════════ -->
+  <section class="anchor">
+    <div class="container anchor__grid">
+      <div>
+        <p class="eyebrow on-ink">Comfort &amp; Durability · 005</p>
+        <h3 class="serif">Take Your<br>Comfort<br><em>Home.</em></h3>
+      </div>
+      <div>
+        <p>
+          Every product in the collection is chosen for two qualities and two qualities only:
+          how it feels the first night, and how it feels two hundred washes later.
+        </p>
+
+        <!-- [DECISION-2] Fourth cell was "2,000+ Hosts Supplied" — unverified. -->
+        <dl class="facts">
+          <div class="fact"><dt>220TC</dt><dd>Premium Sheeting</dd></div>
+          <div class="fact"><dt>500gsm</dt><dd>Duvet Inners</dd></div>
+          <div class="fact"><dt>10yr</dt><dd>Bed Warranty</dd></div>
+          <div class="fact"><dt>48hr</dt><dd>NZ Despatch</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 006 · TESTIMONIALS ═════════════════════════════════════════════ -->
+  <section class="container words">
+    <p class="eyebrow">The Word · 006</p>
+    <h3 class="serif">Shared by the families who love it.</h3>
+
+    <div class="quotes">
+      <figure class="quote">
+        <div class="quote__mark serif" aria-hidden="true">&ldquo;</div>
+        <blockquote>
+          We replaced every bed in our Wānaka cottage with The Little Nest.
+          Guests still mention them in reviews two seasons later.
+        </blockquote>
+        <figcaption><b>Hannah W.</b><span>Host · Wānaka</span></figcaption>
+      </figure>
+
+      <figure class="quote">
+        <div class="quote__mark serif" aria-hidden="true">&ldquo;</div>
+        <blockquote>
+          I bought one Monarch towel set for our spare bathroom and ended up
+          replacing every towel in the house.
+        </blockquote>
+        <figcaption><b>Aroha T.</b><span>Auckland</span></figcaption>
+      </figure>
+
+      <figure class="quote">
+        <div class="quote__mark serif" aria-hidden="true">&ldquo;</div>
+        <blockquote>
+          Sales answered on a Sunday, delivery the next Wednesday. Linen turned up
+          folded like it was for a five-star.
+        </blockquote>
+        <figcaption><b>Marcus L.</b><span>Property Manager · Queenstown</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ══ IMAGE STRIP ════════════════════════════════════════════════════ -->
+  <section class="container strip">
+    <div class="strip__grid">
+      <div class="ph r-3-4 has-img"><img src="assets/img/06-linen.jpg" alt="Close detail of washed linen weave and a turned-back sheet edge" width="426" height="568" loading="lazy" decoding="async"></div>
+      <div class="ph r-3-4 has-img"><img src="assets/img/07-bedroom.jpg" alt="A neutral bedroom corner — timber floor, plastered wall, made bed" width="636" height="848" loading="lazy" decoding="async"></div>
+      <div class="ph r-3-4 has-img"><img src="assets/img/08-towel.jpg" alt="A folded stack of towelling, edges squared" width="536" height="714" loading="lazy" decoding="async"></div>
+      <div class="ph r-3-4 has-img"><img src="assets/img/09-robe.jpg" alt="A waffle-weave cotton robe hanging from a brass hook" width="418" height="557" loading="lazy" decoding="async"></div>
+    </div>
+  </section>
+
+  <!-- ══ 007 · TRADE & PROPERTY ═════════════════════════════════════════
+       Added after competitor research. Every comparable NZ supplier leads
+       with a trade pathway (Vendella gates trade pricing behind a login;
+       GLT's primary CTA is "Request a Trade Quote"). The Little Nest sells
+       the same branded ranges a general retailer already carries, so the
+       trade relationship — not the product — is the differentiator.
+       See README §Competitive position.
+       ═══════════════════════════════════════════════════════════════════ -->
+  <section class="trade">
+    <div class="container trade__inner">
+      <div>
+        <p class="eyebrow">Trade &amp; Property · 007</p>
+        <h3 class="serif">Fitting out more<br><em>than one room?</em></h3>
+        <p>
+          Most of what leaves here goes to people who run rooms for a living. If you're
+          outfitting a property, or replacing a whole floor of it, send us the room count
+          and we'll quote it properly.
+        </p>
+      </div>
+      <div class="trade__cta">
+        <a class="btn" href="contact.html">Request a Quote →</a>
+        <span class="note">Mon — Fri · 9am to 5pm NZST · sales@thelittlenest.co.nz</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CTA CLOSER ═════════════════════════════════════════════════════ -->
+  <section class="closer">
+    <div class="container closer__inner">
+      <h3 class="serif">Ready to outfit the room?</h3>
+      <a class="btn" href="/shop">Shop the Range →</a>
+    </div>
+  </section>
+</main>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <span class="wordmark-text wordmark-text--lg">
+          <b>The Little Nest</b>
+          <i>Take Your Comfort Home.</i>
+        </span>
+        <p class="footer__blurb">
+          Hospitality bedding, towelling and accessories, supplied from Aotearoa to
+          short-stay hosts, lodges and homes that prefer their linen done properly.
+        </p>
+      </div>
+
+      <nav aria-labelledby="ft-shop">
+        <h2 id="ft-shop">Shop</h2>
+        <!-- [DECISION-3] The handover's locked seven, in order. -->
+        <ul>
+          <li><a href="/categories/pillows/133974000001145139">Pillows</a></li>
+          <li><a href="/categories/pillow-mattress/133974000001145142">Pillow &amp; Mattress Protection</a></li>
+          <li><a href="/categories/bedding-quilts/133974000001145147">Bedding &amp; Quilts</a></li>
+          <li><a href="/categories/bed-linen/133974000001145150">Bed Linen</a></li>
+          <li><a href="/categories/beds-mattresses/133974000001145153">Beds &amp; Mattresses</a></li>
+          <li><a href="/categories/towels-bathrobes/133974000001145156">Towels &amp; Bathrobes</a></li>
+          <li><a href="/categories/room-accessories/133974000001145159">Room Accessories</a></li>
+          <li><a href="/categories/clearance/133974000001145162">Clearance</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="ft-explore">
+        <h2 id="ft-explore">Explore</h2>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="sustainability.html">Sustainability</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="policies.html#shipping">Shipping</a></li>
+          <li><a href="policies.html#returns">Returns</a></li>
+          <li><a href="policies.html#terms">Terms &amp; Conditions</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2>Contact</h2>
+        <a class="footer__email" href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
+        <p class="footer__meta">www.thelittlenest.co.nz</p>
+        <!-- Confirmed hours: 9am–5pm. The brand guide's 8.30am is an error. -->
+        <p class="footer__hours">Mon — Fri · 9am to 5pm NZST</p>
+      </div>
+    </div>
+
+    <div class="footer__rule"></div>
+
+    <div class="footer__base">
+      <span>© <span data-year>2026</span> The Little Nest. Aotearoa New Zealand.</span>
+      <span>Take Your Comfort Home</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/tln.js"></script>
+</body>
+</html>
