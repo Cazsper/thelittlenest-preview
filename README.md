@@ -1,11 +1,22 @@
-# The Little Nest — static design preview
+# The Little Nest — design preview
 
-A read-only preview of the marketing pages for thelittlenest.co.nz, published for internal review.
+A read-only preview of thelittlenest.co.nz, published for internal review.
 
-Pages: `index.html`, `about.html`, `sustainability.html`, `contact.html`, `policies.html`
+Pages: `index.html`, `about.html`, `sustainability.html`, `contact.html`,
+`policies.html`, `shop.html`
 
-**This is not the live store.** Shop, cart, account and category links point at the
-future online store and are not part of this preview — they resolve to `404.html`.
+**The shop is included and browsable** — 8 categories, 173 products, 367 size
+variants, a working cart and the real freight rate card. Routes are
+`shop.html`, `#/c/<slug>`, `#/p/<id>` and `#/cart`.
+
+**This is not the live store.** Checkout does not take payment: that needs the
+Zoho Commerce Storefront API, which needs the store published. Sign-in is
+Zoho's and is still a placeholder. Product photography is not shot yet — tiles
+carry an explicit "Photography to come" frame.
+
+Prices and SKUs come from the approved price list. Rows with a blank
+`WEBSITE DISPLAY` are excluded, and rows with no approved price show
+"Price on application" rather than a made-up number.
 
 Search engines are blocked via `robots.txt` and a `noindex` meta tag so this preview
 cannot compete with the production domain. Canonical tags still point at

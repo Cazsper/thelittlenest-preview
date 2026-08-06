@@ -44,22 +44,22 @@
                 Restore only if a real figure is confirmed.
   [DECISION-3]  Category names. The triptych is an editorial grouping, not the
                 store taxonomy. Links point at the handover's locked seven.
-  [DECISION-4]  Store URLs. PARTLY RESOLVED 5 Aug 2026 — do NOT treat as closed.
-                DONE: all 44 category hrefs across the five pages now carry the
-                real Zoho paths, re-verified 5 Aug against the live category
-                API. Pattern: /categories/<slug>/<numeric-id>.
-                STILL PLACEHOLDER:
-                  · href="/shop" — 8 occurrences across the five pages. The
-                    live store has NO all-products page. Online Store → Pages
-                    holds only: Home (twice), Contact, Terms & Conditions,
-                    Shipping Policy, Returns Policy. Either create an
-                    all-products page in Zoho or repoint these 8 links.
-                  · href="/shop/beds-mattresses/makers-midnight-euro-top" and
-                    its "#specs" variant (index.html). Product URLs use the
-                    same unguessable numeric-id pattern as categories and have
-                    not been captured.
-                  · href="/cart" (5) and href="/account" (5) — assumed, never
-                    verified against the live store.
+  [DECISION-4]  Store URLs. RESOLVED 6 Aug 2026, and the resolution changed
+                shape: the shop is now IN this site rather than a link out to
+                Zoho, so these paths are local and no longer depend on Zoho's
+                unguessable numeric-id URLs at all.
+                  · href="shop.html"          — the range, by category
+                  · href="shop.html#/c/<slug>" — a category
+                  · href="shop.html#/p/<id>"   — a product
+                  · href="shop.html#/cart"     — the Nest
+                The 8 bare /shop links and the 2 product links are done. The
+                footer's 8 category links were repointed from Zoho's
+                /categories/<slug>/<numeric-id> paths to shop.html#/c/<slug>.
+
+                ONE PLACEHOLDER REMAINS: href="/account" (5 pages). Customer
+                accounts are Zoho's, and there is nothing to point at until the
+                store is published. Do not invent a path — repoint it when the
+                Storefront API goes live, or remove the Sign In link.
 
   IMAGERY — updated 5 Aug 2026. The nine image slots are now FILLED with the
   AI-generated frames from preview/shots/, copied to assets/img/. They are
@@ -95,7 +95,7 @@
 
     <nav class="nav" id="primary-nav" aria-label="Primary">
       <a href="index.html" aria-current="page">Home</a>
-      <a href="/shop">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="about.html">About</a>
       <a href="sustainability.html">Sustainability</a>
       <a href="contact.html">Contact</a>
@@ -111,7 +111,7 @@
     <div class="header__actions">
       <!-- Zoho handles authentication natively. No modal, no local accounts. -->
       <a class="account" href="/account">Sign In</a>
-      <a class="cart" href="/cart">
+      <a class="cart" href="shop.html#/cart">
         Nest
         <span class="cart__count" data-cart-count>0</span>
       </a>
@@ -128,7 +128,7 @@
         <p class="eyebrow">Aotearoa New&nbsp;Zealand · 001</p>
         <h1 class="serif">Take Your<br><em>Comfort</em><br>Home.</h1>
         <div class="hero__cta">
-          <a class="btn" href="/shop">Shop the Range →</a>
+          <a class="btn" href="shop.html">Shop the Range →</a>
           <a class="btn btn--ghost" href="about.html">Our Standard</a>
         </div>
       </div>
@@ -181,7 +181,7 @@
   <section class="container triptych">
     <div class="triptych__head">
       <p class="eyebrow">The Collection · 003</p>
-      <a class="ulink" href="/shop">View All Products →</a>
+      <a class="ulink" href="shop.html">View All Products →</a>
     </div>
 
     <h3 class="serif">Three rooms.<br><em>One standard.</em></h3>
@@ -189,7 +189,7 @@
     <!-- [DECISION-3] -->
     <div class="cards">
       <article class="card">
-        <a href="/categories/bed-linen/133974000001145150">
+        <a href="shop.html#/c/bed-linen">
           <div class="ph r-4-5 has-img"><img src="assets/img/02-bed.jpg" alt="A made bed in a cottage bedroom, layered white sheeting under a natural linen throw" width="678" height="848" loading="lazy" decoding="async"></div>
           <div class="card__meta"><span>01</span><span>Beds · Bedding · Bed Linen</span></div>
           <h4 class="serif">The Bed</h4>
@@ -199,7 +199,7 @@
       </article>
 
       <article class="card">
-        <a href="/categories/towels-bathrobes/133974000001145156">
+        <a href="shop.html#/c/towels-bathrobes">
           <div class="ph r-4-5 has-img"><img src="assets/img/03-bath.jpg" alt="A folded stack of white and charcoal towels beside a waffle-weave robe on a brass hook" width="922" height="1152" loading="lazy" decoding="async"></div>
           <div class="card__meta"><span>02</span><span>Towels · Bathrobes</span></div>
           <h4 class="serif">The Bath</h4>
@@ -209,7 +209,7 @@
       </article>
 
       <article class="card">
-        <a href="/categories/room-accessories/133974000001145159">
+        <a href="shop.html#/c/room-accessories">
           <div class="ph r-4-5 has-img"><img src="assets/img/04-room.jpg" alt="A wooden luggage rack with a folded throw laid across it, against a plastered wall" width="922" height="1152" loading="lazy" decoding="async"></div>
           <div class="card__meta"><span>03</span><span>Room Accessories</span></div>
           <h4 class="serif">The Room</h4>
@@ -244,8 +244,8 @@
         </dl>
 
         <div class="featured__cta">
-          <a class="btn" href="/shop/beds-mattresses/makers-midnight-euro-top">Add to Nest +</a>
-          <a class="btn btn--ghost" href="/shop/beds-mattresses/makers-midnight-euro-top#specs">Product Specs →</a>
+          <a class="btn" href="shop.html#/p/p002">Add to Nest +</a>
+          <a class="btn btn--ghost" href="shop.html#/p/p002">Product Specs →</a>
         </div>
       </div>
     </div>
@@ -350,7 +350,7 @@
   <section class="closer">
     <div class="container closer__inner">
       <h3 class="serif">Ready to outfit the room?</h3>
-      <a class="btn" href="/shop">Shop the Range →</a>
+      <a class="btn" href="shop.html">Shop the Range →</a>
     </div>
   </section>
 </main>
@@ -374,14 +374,14 @@
         <h2 id="ft-shop">Shop</h2>
         <!-- [DECISION-3] The handover's locked seven, in order. -->
         <ul>
-          <li><a href="/categories/pillows/133974000001145139">Pillows</a></li>
-          <li><a href="/categories/pillow-mattress/133974000001145142">Pillow &amp; Mattress Protection</a></li>
-          <li><a href="/categories/bedding-quilts/133974000001145147">Bedding &amp; Quilts</a></li>
-          <li><a href="/categories/bed-linen/133974000001145150">Bed Linen</a></li>
-          <li><a href="/categories/beds-mattresses/133974000001145153">Beds &amp; Mattresses</a></li>
-          <li><a href="/categories/towels-bathrobes/133974000001145156">Towels &amp; Bathrobes</a></li>
-          <li><a href="/categories/room-accessories/133974000001145159">Room Accessories</a></li>
-          <li><a href="/categories/clearance/133974000001145162">Clearance</a></li>
+          <li><a href="shop.html#/c/pillows">Pillows</a></li>
+          <li><a href="shop.html#/c/pillow-mattress">Pillow &amp; Mattress Protection</a></li>
+          <li><a href="shop.html#/c/bedding-quilts">Bedding &amp; Quilts</a></li>
+          <li><a href="shop.html#/c/bed-linen">Bed Linen</a></li>
+          <li><a href="shop.html#/c/beds-mattresses">Beds &amp; Mattresses</a></li>
+          <li><a href="shop.html#/c/towels-bathrobes">Towels &amp; Bathrobes</a></li>
+          <li><a href="shop.html#/c/room-accessories">Room Accessories</a></li>
+          <li><a href="shop.html#/c/clearance">Clearance</a></li>
         </ul>
       </nav>
 
