@@ -51,40 +51,66 @@ const Catalogue = {
     if (!r.ok) throw new Error('catalogue.json ' + r.status);
     return (this._d = await r.json());
   },
-  all()        { return this._d.products; },
+  /* `hidden` products are on the approved price list but must not be offered —
+     currently only BD3216F, which Zoho has no record of and so cannot fulfil.
+     They are filtered here so search, sort and the category grids all agree with
+     the static markup the generator produced. */
+  all()        { return this._d.products.filter(p => !p.hidden); },
   cat(slug)    { return this._d.cats.find(c => c.slug === slug); },
-  product(id)  { return this._d.products.find(p => p.id === id); },
-  inCat(name)  { return this._d.products.filter(p => p.cat === name); },
+  product(id)  { const p = this._d.products.find(x => x.id === id);
+                 return p && !p.hidden ? p : undefined; },
+  inCat(name)  { return this.all().filter(p => p.cat === name); },
 };
 
 /* --- cart --------------------------------------------------------------- */
 
-const KEY = 'tln.cart.v1';
+/* v2: cart lines are keyed by product + size, NOT by SKU.
+
+   WHY: the price list carries two SKUs twice — FU3247 on both the Single and the
+   Double of Makers Sofa Bed Replacement Mattress, and BD2236WN on both the Queen
+   and the Super King of Weavers 220TC Premium Sheeting Flat Navy. Keying on SKU
+   merged those two sizes into one line, so a customer who ordered a Double got
+   quantity 2 of the Single at the Single's price. Remove and quantity controls
+   hit the wrong line for the same reason.
+
+   The underlying data defect still needs fixing at source — Zoho holds only one
+   product per duplicated SKU, at the lower price, so the ORDER value is wrong by
+   $90 and $20 until new SKUs are issued. This only stops the shop compounding it.
+
+   v1 carts are dropped rather than migrated: a v1 line cannot be resolved back
+   to a size when its SKU is ambiguous, which is the whole bug. */
+const KEY = 'tln.cart.v2';
+
+const lineKey = (product, variant) => `${product.id}|${variant.size}`;
 
 const Cart = {
   lines: [],
   load()  { try { this.lines = JSON.parse(localStorage.getItem(KEY)) || []; }
-            catch { this.lines = []; } this.paintCount(); },
+            catch { this.lines = []; }
+            this.lines = this.lines.filter(l => l && l.key);
+            this.paintCount(); },
   save()  { try { localStorage.setItem(KEY, JSON.stringify(this.lines)); } catch {}
             this.paintCount(); },
   add(product, variant, qty = 1) {
-    const line = this.lines.find(l => l.sku === variant.sku);
+    if (variant.price == null) return;      // never cart an unpriced size
+    const key = lineKey(product, variant);
+    const line = this.lines.find(l => l.key === key);
     if (line) line.qty += qty;
     else this.lines.push({
-      sku: variant.sku, vid: variant.vid || null, pid: product.id,
+      key, sku: variant.sku, vid: variant.vid || null, pid: product.id,
       slug: product.slug, name: product.name, size: variant.size,
       price: variant.price, qty,
     });
     this.save();
   },
-  setQty(sku, qty) {
-    const l = this.lines.find(x => x.sku === sku);
+  setQty(key, qty) {
+    const l = this.lines.find(x => x.key === key);
     if (!l) return;
     l.qty = Math.max(0, qty);
-    if (!l.qty) this.lines = this.lines.filter(x => x.sku !== sku);
+    if (!l.qty) this.lines = this.lines.filter(x => x.key !== key);
     this.save();
   },
-  remove(sku) { this.lines = this.lines.filter(l => l.sku !== sku); this.save(); },
+  remove(key) { this.lines = this.lines.filter(l => l.key !== key); this.save(); },
   count()     { return this.lines.reduce((n, l) => n + l.qty, 0); },
   subtotal()  { return this.lines.reduce((n, l) => n + l.qty * (l.price || 0), 0); },
   paintCount(){ document.querySelectorAll('[data-cart-count]')
@@ -111,18 +137,35 @@ function freight(subtotal, rural = false) {
 function hydrateProduct(root) {
   const p = Catalogue.product(root.dataset.product);
   if (!p) return;
-  let i = 0, qty = 1;
+
+  /* Priced-ness is derived per variant, never from p.unpriced — that field is a
+     COUNT of unpriced variants and reading it as a boolean rendered six products
+     with priced sizes as "Price on application" with Add disabled. */
+  const allPoa = p.variants.every(v => v.price == null);
+  let i = p.variants.findIndex(v => v.price != null);
+  if (i < 0) i = 0;
+  let qty = 1;
 
   const price = root.querySelector('[data-price]');
   const sku   = root.querySelector('[data-sku]');
   const qtyIn = root.querySelector('[data-qty-val]');
+  const add   = root.querySelector('[data-add]');
   const sizes = [...root.querySelectorAll('.shop-size')];
 
   const paint = () => {
     const v = p.variants[i];
-    if (!p.unpriced) price.textContent = money(v.price);
+    const poa = v.price == null;
+    if (!allPoa) {
+      price.innerHTML = poa
+        ? '<span class="shop-poa">Price on application</span>'
+        : esc(money(v.price));
+    }
     sku.textContent = 'SKU ' + v.sku;
     sizes.forEach((b, n) => b.setAttribute('aria-checked', String(n === i)));
+    if (add && !allPoa) {
+      add.disabled = poa;
+      add.textContent = poa ? 'Enquire' : 'Add to Nest';
+    }
     qtyIn.value = qty;
   };
 
@@ -135,11 +178,11 @@ function hydrateProduct(root) {
     qty = Math.max(1, parseInt(qtyIn.value, 10) || 1); paint();
   });
 
-  const add = root.querySelector('[data-add]');
-  if (add && !p.unpriced) add.addEventListener('click', () => {
+  if (add && !allPoa) add.addEventListener('click', () => {
+    if (p.variants[i].price == null) return;
     Cart.add(p, p.variants[i], qty);
     add.textContent = 'Added ✓';
-    setTimeout(() => { add.textContent = 'Add to Nest'; }, 1400);
+    setTimeout(paint, 1400);
   });
 
   paint();
@@ -148,8 +191,16 @@ function hydrateProduct(root) {
 /* --- search + sort on shop.html and category pages ---------------------- */
 
 function tile(p, prefix) {
-  const price = p.unpriced ? '<span class="shop-poa">Price on application</span>'
-    : (p.lo === p.hi ? money(p.lo) : `${money(p.lo)} – ${money(p.hi)}`);
+  /* Same derivation as the generator: a product is POA only when EVERY size is,
+     and the range is taken from the priced sizes. Must stay in step with
+     price_label() in build-shop-pages.py or the hydrated grid will disagree with
+     the static markup it replaces. */
+  const ps = p.variants.filter(v => v.price != null).map(v => v.price);
+  const price = !ps.length
+    ? '<span class="shop-poa">Price on application</span>'
+    : (Math.min(...ps) === Math.max(...ps)
+        ? money(Math.min(...ps))
+        : `${money(Math.min(...ps))} – ${money(Math.max(...ps))}`);
   return `<a class="shop-tile" href="${prefix}products/${esc(p.slug)}.html">
     <span class="ph r-4-5 shop-tile__ph"><span class="ph__cap">Photography to come</span></span>
     <span class="shop-tile__name">${esc(p.name)}</span>
@@ -222,12 +273,12 @@ function renderCart() {
           <div class="shop-line__body">
             <a class="shop-line__name" href="products/${esc(l.slug)}.html">${esc(l.name)}</a>
             <p class="shop-line__meta">${esc(l.size)} · SKU ${esc(l.sku)}</p>
-            <button class="shop-line__rm" type="button" data-rm="${esc(l.sku)}">Remove</button>
+            <button class="shop-line__rm" type="button" data-rm="${esc(l.key)}">Remove</button>
           </div>
           <div class="shop-qty shop-qty--sm">
-            <button type="button" data-line="-" data-sku="${esc(l.sku)}" aria-label="Decrease">–</button>
-            <input type="text" inputmode="numeric" value="${l.qty}" data-line-val="${esc(l.sku)}" aria-label="Quantity">
-            <button type="button" data-line="+" data-sku="${esc(l.sku)}" aria-label="Increase">+</button>
+            <button type="button" data-line="-" data-key="${esc(l.key)}" aria-label="Decrease">–</button>
+            <input type="text" inputmode="numeric" value="${l.qty}" data-line-val="${esc(l.key)}" aria-label="Quantity">
+            <button type="button" data-line="+" data-key="${esc(l.key)}" aria-label="Increase">+</button>
           </div>
           <span class="shop-line__price">${money(l.qty * l.price)}</span>
         </div>`).join('')}
@@ -248,8 +299,9 @@ function renderCart() {
     b.addEventListener('click', () => { Cart.remove(b.dataset.rm); renderCart(); }));
   root.querySelectorAll('[data-line]').forEach(b =>
     b.addEventListener('click', () => {
-      const l = Cart.lines.find(x => x.sku === b.dataset.sku);
-      Cart.setQty(b.dataset.sku, l.qty + (b.dataset.line === '+' ? 1 : -1));
+      const l = Cart.lines.find(x => x.key === b.dataset.key);
+      if (!l) return;
+      Cart.setQty(l.key, l.qty + (b.dataset.line === '+' ? 1 : -1));
       renderCart();
     }));
   root.querySelectorAll('[data-line-val]').forEach(inp =>
@@ -269,6 +321,17 @@ async function checkout() {
       'The shop, cart and freight all work. Payment needs the Zoho store ' +
       'published so its Storefront API can take the order — that is the one ' +
       'remaining step.');
+    return;
+  }
+  /* Two SKUs on the approved list do not exist in Zoho at all (BD2382 and
+     BD3216F, verified 6 Aug against the live catalogue), so they have no
+     product_variant_id and Zoho cannot fulfil them. Fail loudly here rather than
+     dropping a line silently and taking payment for an order that is short. */
+  const orphan = Cart.lines.filter(l => !l.vid);
+  if (orphan.length) {
+    alert('One or more items in your Nest cannot be ordered online yet:\n\n' +
+      orphan.map(l => `· ${l.name} — ${l.size} (${l.sku})`).join('\n') +
+      '\n\nPlease email sales@thelittlenest.co.nz and we will sort it directly.');
     return;
   }
   for (const l of Cart.lines) {

@@ -3,11 +3,15 @@
 A read-only preview of thelittlenest.co.nz, published for internal review.
 
 Pages: `index.html`, `about.html`, `sustainability.html`, `contact.html`,
-`policies.html`, `shop.html`
+`policies.html`, `shop.html`, `cart.html`, `account.html`, plus
+`categories/<slug>.html` (8) and `products/<slug>.html` (173) — 187 URLs in
+`sitemap.xml`.
 
 **The shop is included and browsable** — 8 categories, 173 products, 367 size
-variants, a working cart and the real freight rate card. Routes are
-`shop.html`, `#/c/<slug>`, `#/p/<id>` and `#/cart`.
+variants, a working cart and the real freight rate card. **Every page is a real
+static URL.** Hash routing (`#/p/<id>`) was removed on 6 Aug 2026 because it
+meant all 173 products shared one URL and none could ever appear in a search
+result. `assets/js/shop.js` hydrates the static markup; it does not render it.
 
 **This is not the live store.** Checkout does not take payment: that needs the
 Zoho Commerce Storefront API, which needs the store published. Sign-in is

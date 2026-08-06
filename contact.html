@@ -30,17 +30,19 @@
 <link rel="stylesheet" href="assets/tln.css">
 
 <!--
-  NOTE ON THE FORM — updated 5 Aug 2026
+  NOTE ON THE FORM — updated 6 Aug 2026
   -------------------------------------
-  The concept faked the submit in JavaScript. This is a real <form> with real
-  validation attributes. It used to carry action="" method="post", which silently
-  swallowed every enquiry; it now carries a mailto submit as an interim measure so
-  nothing can be lost. See the comment on the <form> tag itself.
+  The enquiry form is now the REAL Zoho form, embedded. It is Zoho Forms'
+  "SEND US YOUR ENQUIRY" (slug `ContactUs`), so a submission lands in Zoho and
+  cannot be lost.
 
-  Before go-live, replace the whole block with Zoho Commerce's own form component.
-  Zoho does not expose a plain POST endpoint for this, so it cannot be wired until
-  the theme is ported. Do NOT wire it to a third-party endpoint — customer enquiries
-  need to land in the same place as everything else.
+  Superseded: everything earlier about "replace this with Zoho Commerce's own form
+  component when the theme is ported." There is no theme port — this site is the
+  website and Zoho is the backend. Zoho Forms is the backend for enquiries.
+
+  The long comment on the embed block below explains why it is an iframe rather
+  than our own markup, and what replaces it once Cloudflare Pages is live. Read
+  that before changing anything here.
 -->
 </head>
 
@@ -118,51 +120,69 @@
       <p class="eyebrow">Send A Message · 003</p>
 
       <!--
-        FIXED 5 Aug 2026. This was action="" with method="post", which is worse than
-        broken: the browser posts the form back to contact.html, the page reloads, the
-        customer sees what looks like a successful submit, and the enquiry is gone.
-        Silent data loss on a live retail site.
+        LIVE ZOHO FORM, wired 6 Aug 2026. Replaces the `mailto:` stopgap.
 
-        Interim fix: a mailto submit. It is not elegant — it opens the customer's own
-        mail client with the fields as plain text — but it cannot lose an enquiry, and
-        it needs no backend. Reversible in one line.
+        HISTORY, because this field has been wrong twice.
+        1. Originally action="" method="post" — the browser posted back to
+           contact.html, the page reloaded, the customer saw what looked like
+           success, and the enquiry was gone. Silent data loss.
+        2. Then a `mailto:` submit. Better in intent, but a mailto form POST is
+           unreliable — Chromium-based browsers generally refuse it outright, so on
+           the browsers most customers use it did nothing visible at all.
 
-        Replace this at port time. Zoho Commerce renders contact forms through its own
-        platform component (Visual Editor form block / FACE form tag) rather than
-        exposing a plain POST endpoint, so there is nothing to point `action` at until
-        the theme is actually ported. Do NOT wire it to a third-party endpoint —
-        enquiries need to land where everything else does.
+        WHY AN IFRAME AND NOT OUR OWN MARKUP.
+        The obvious thing is to keep the hand-built form and POST it to Zoho. That
+        does not work: Zoho Forms submits through its own script with a per-session
+        token, so a cross-origin POST from this site is rejected — silently. That is
+        the same failure mode as (1) and it is not worth the nicer typography.
+
+        The form embedded below is the REAL Zoho form, so a submission cannot be
+        lost: it lands in Zoho Forms' entries for "SEND US YOUR ENQUIRY".
+
+        NOTE THE FORM IDENTITY, because the handoffs had this wrong. There are two
+        forms in the Zoho Forms org, both created 14 Sep 2025:
+          · "Send Us Your Enquiry"  slug `SoftwareEvaluation`  <- NOT this one.
+            It is an unfinished template: Name, Email, Mobile, a five-star "Rate
+            this store" and an image upload. There is no message field, so nobody
+            could actually send an enquiry through it.
+          · "SEND US YOUR ENQUIRY"  slug `ContactUs`           <- THIS one.
+            Full name (First/Last), Email, Enquiry. Both were publicly shared and
+            enabled all along; neither was ever disabled.
+
+        THE UPGRADE, once Cloudflare Pages is live. Put a Pages Function at
+        /api/enquiry that takes a normal POST from our own markup and forwards it to
+        Zoho. That gets the site's own design AND guaranteed delivery. It needs a
+        backend, which is why it is not today's job.
       -->
-      <form class="form" action="mailto:sales@thelittlenest.co.nz" method="post" enctype="text/plain">
-        <label class="field">
-          <span>Full Name</span>
-          <input type="text" name="name" autocomplete="name" required>
-        </label>
-
-        <label class="field">
-          <span>Email Address</span>
-          <input type="email" name="email" autocomplete="email" required>
-        </label>
-
-        <label class="field">
-          <span>Phone</span>
-          <input type="tel" name="phone" autocomplete="tel" placeholder="Optional">
-        </label>
-
-        <label class="field">
-          <span>Message</span>
-          <textarea name="message" rows="4" placeholder="Tell us what you need." required></textarea>
-        </label>
-
-        <div class="form__submit">
-          <button class="btn" type="submit">Send Message →</button>
-        </div>
-      </form>
+      <div class="form-embed">
+        <iframe
+          title="Send us your enquiry"
+          src="https://forms.zohopublic.com.au/thelittlenest1/form/ContactUs/formperma/ZStT5Iq1MMZBHkVcnR6zWzmbG6dT7Ji9hUAI6Ifydec?zf_rszfm=1"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          data-zf-embed></iframe>
+      </div>
 
       <p class="form__note">
-        We reply within one business day. For urgent enquiries, email us directly at
+        We reply within one business day. If the form above does not load, or your
+        enquiry is urgent, email us directly at
         <a href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
       </p>
+
+      <script>
+      /* Zoho posts its rendered height to the parent when ?zf_rszfm=1 is set, so the
+         iframe can grow with the form instead of scrolling inside a fixed box. The
+         CSS min-height below is the fallback if the message never arrives. */
+      (function () {
+        var frame = document.querySelector('[data-zf-embed]');
+        if (!frame) return;
+        window.addEventListener('message', function (e) {
+          if (!/zohopublic\.com/.test(e.origin) || typeof e.data !== 'string') return;
+          var h = parseInt(e.data.split('|')[1], 10);
+          if (h > 200 && h < 4000) frame.style.height = h + 'px';
+        });
+      })();
+      </script>
     </div>
   </section>
 </main>

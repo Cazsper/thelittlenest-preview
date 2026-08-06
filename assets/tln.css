@@ -637,3 +637,22 @@ ul { list-style: none; margin: 0; padding: 0; }
   .footer__base { flex-direction: column; align-items: flex-start; gap: 10px; }
   .btn { padding: 16px 26px; font-size: 11px; }
 }
+
+/* --- embedded Zoho enquiry form ---------------------------------------------
+   Added 6 Aug 2026. The form itself is Zoho's, in an iframe, because a
+   cross-origin POST to Zoho Forms is rejected silently and a lost enquiry is
+   worse than mismatched typography. These rules stop it reading as a bolted-on
+   widget: full column width, no chrome, and a min-height so the box is the
+   right size before Zoho's resize message arrives — and if it never does. */
+.form-embed {
+  margin-top: 40px;
+  max-width: 560px;
+  background: var(--paper);
+  border: 1px solid var(--grey-line);
+}
+.form-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 620px;
+  border: 0;
+}
