@@ -74,6 +74,44 @@
   letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey);
 }
 
+/* ── Section headings ────────────────────────────────────────────────── */
+
+.shop-sec { padding-top: 72px; }
+.shop-sec h2 {
+  font-size: 11px; color: var(--grey); margin: 0;
+  padding-bottom: 18px; border-bottom: 1px solid var(--grey-line);
+}
+
+/* ── Search + sort toolbar ───────────────────────────────────────────── */
+
+.shop-tools {
+  max-width: var(--container); margin: 0 auto;
+  padding-inline: var(--pad); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.shop-tools__count {
+  font-family: var(--caps); font-size: 10px;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey);
+}
+.shop-tools__controls { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.shop-search, .shop-sort {
+  font-family: var(--body); font-size: 13px; color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--grey-soft);
+  padding: 12px 16px;
+  min-height: 44px;
+}
+.shop-search { min-width: 260px; }
+.shop-search::placeholder { color: var(--grey); }
+.shop-search:focus, .shop-sort:focus {
+  outline: none; border-color: var(--ink);
+}
+.shop-sort { cursor: pointer; padding-right: 34px; }
+
+.shop-empty { color: var(--grey); padding: 48px 0; grid-column: 1 / -1; }
+
 /* ── Product grid ────────────────────────────────────────────────────── */
 
 .shop-grid {

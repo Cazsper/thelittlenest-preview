@@ -181,14 +181,81 @@ function crumbs(parts) {
   }</nav>`;
 }
 
+/* Search + sort. Applies to the A–Z listing and to every category, so the
+   same controls behave the same way wherever you are. */
+function toolbar() {
+  return `
+  <div class="shop-tools">
+    <span class="shop-tools__count" data-count></span>
+    <div class="shop-tools__controls">
+      <input class="shop-search" type="search" data-q
+             placeholder="Search by name or SKU" aria-label="Search products">
+      <select class="shop-sort" data-sort aria-label="Sort products">
+        <option value="az">Name A–Z</option>
+        <option value="lo">Price low to high</option>
+        <option value="hi">Price high to low</option>
+      </select>
+    </div>
+  </div>
+  <section class="container shop-grid" data-grid></section>`;
+}
+
+/* scope: 'all' or a category slug. Unpriced products always sort last on a
+   price sort rather than being treated as $0. */
+function paint(scope) {
+  const root = el('shop-root');
+  const grid = root.querySelector('[data-grid]');
+  if (!grid) return;
+
+  const q = (root.querySelector('[data-q]')?.value || '').trim().toLowerCase();
+  const sort = root.querySelector('[data-sort]')?.value || 'az';
+
+  let list = scope === 'all'
+    ? Catalogue.cats().flatMap(c => Catalogue.inCat(c.name))
+    : Catalogue.inCat(Catalogue.cat(scope).name);
+
+  if (q) list = list.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.variants.some(v => (v.sku || '').toLowerCase().includes(q)));
+
+  if (sort === 'lo')      list.sort((a, b) => (a.lo == null) - (b.lo == null) || a.lo - b.lo);
+  else if (sort === 'hi') list.sort((a, b) => (a.hi == null) - (b.hi == null) || b.hi - a.hi);
+  else                    list.sort((a, b) => a.name.localeCompare(b.name));
+
+  grid.innerHTML = list.length
+    ? list.map(tile).join('')
+    : `<p class="shop-empty">Nothing matches that search.</p>`;
+
+  const count = root.querySelector('[data-count]');
+  if (count) count.textContent = list.length + (list.length === 1 ? ' product' : ' products');
+}
+
+function wireTools(scope) {
+  const root = el('shop-root');
+  const q = root.querySelector('[data-q]');
+  const s = root.querySelector('[data-sort]');
+  if (q) q.addEventListener('input', () => paint(scope));
+  if (s) s.addEventListener('change', () => paint(scope));
+  paint(scope);
+}
+
 function vShop() {
+  const total = Catalogue.cats().reduce((n, c) => n + Catalogue.inCat(c.name).length, 0);
+  const variants = Catalogue.cats()
+    .flatMap(c => Catalogue.inCat(c.name))
+    .reduce((n, p) => n + p.variants.length, 0);
+
   return `
   <section class="container shop-head">
     ${crumbs([{ label: 'Home', href: 'index.html' }, { label: 'Shop' }])}
     <h1 class="serif">The Range</h1>
-    <p class="shop-head__lede">Hotel-grade linen, beds and towelling — the same
-      goods we supply to accommodation, available by the piece.</p>
+    <p class="shop-head__lede">${total} products across eight categories,
+      ${variants} sizes and colourways in all. Hotel-grade linen, beds and
+      towelling — the same goods we supply to accommodation, available by
+      the piece.</p>
   </section>
+
+  <section class="container shop-sec"><h2 class="caps">Shop by category</h2></section>
   <section class="container shop-cats">
     ${Catalogue.cats().map(c => `
       <a class="shop-cat" href="#/c/${esc(c.slug)}">
@@ -199,22 +266,23 @@ function vShop() {
           <span class="shop-cat__count">${Catalogue.inCat(c.name).length} products</span>
         </span>
       </a>`).join('')}
-  </section>`;
+  </section>
+
+  <section class="container shop-sec"><h2 class="caps">Everything, A–Z</h2></section>
+  ${toolbar()}`;
 }
 
 function vCat(slug) {
   const c = Catalogue.cat(slug);
   if (!c) return vNotFound();
-  const items = Catalogue.inCat(c.name);
   return `
   <section class="container shop-head">
     ${crumbs([{ label: 'Home', href: 'index.html' },
               { label: 'Shop', href: '#/shop' }, { label: c.name }])}
     <h1 class="serif">${esc(c.name)}</h1>
     <p class="shop-head__lede">${esc(c.blurb)}</p>
-    <p class="shop-head__count">${items.length} products</p>
   </section>
-  <section class="container shop-grid">${items.map(tile).join('')}</section>`;
+  ${toolbar()}`;
 }
 
 function vProduct(id) {
@@ -339,8 +407,10 @@ function render() {
 
   window.scrollTo(0, 0);
   Cart.paintCount();
-  if (seg === 'p') wireProduct(arg);
-  if (seg === 'cart') wireCart();
+  if (seg === 'c')       wireTools(arg);
+  else if (seg === 'p')  wireProduct(arg);
+  else if (seg === 'cart') wireCart();
+  else                   wireTools('all');
 }
 
 function wireProduct(id) {
