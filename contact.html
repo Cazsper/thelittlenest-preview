@@ -154,9 +154,21 @@
         Zoho. That gets the site's own design AND guaranteed delivery. It needs a
         backend, which is why it is not today's job.
       -->
-      <div class="form-embed">
+      <!--
+        The sizing below is deliberately INLINE, not left to tln.css.
+
+        An iframe with no width defaults to 300px, so if the stylesheet is missing
+        for any reason the form renders as a narrow column and looks broken. That
+        is not hypothetical: on first deploy GitHub Pages served a cached tln.css
+        without these rules and the form rendered at 304px inside a 672px column.
+        Inline styles cannot be cached away, so the embed is correct on its own.
+        The matching rules in tln.css stay as the canonical version.
+      -->
+      <div class="form-embed" style="max-width:560px;margin-top:40px">
         <iframe
           title="Send us your enquiry"
+          width="100%"
+          style="display:block;width:100%;min-height:620px;border:0"
           src="https://forms.zohopublic.com.au/thelittlenest1/form/ContactUs/formperma/ZStT5Iq1MMZBHkVcnR6zWzmbG6dT7Ji9hUAI6Ifydec?zf_rszfm=1"
           loading="lazy"
           referrerpolicy="strict-origin-when-cross-origin"
