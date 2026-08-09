@@ -11,20 +11,26 @@
    that the content exists without them.
 
    GOING LIVE
-   Catalogue and cart read through adapters so the UI never knows the source.
-   Set SOURCE.mode = 'zoho' and the same screens run on the live Zoho cart,
-   freight and checkout.
+   Set SOURCE.mode = 'zoho' and the Checkout button starts handing real carts to
+   Zoho. That is the ONLY switch; everything behind it is built and tested.
 
-   Verified 6 Aug 2026: the Storefront API answers on the .com.au data centre
-   with header `domain-name: staging.thelittlenest.co.nz`. /cart returns live
-   JSON. Catalogue endpoints return 200-empty until the store is published,
-   which is the one remaining dependency.
+   ⚠ DO NOT FLIP IT UNTIL A REAL TEST ORDER HAS BEEN PLACED AND CONFIRMED.
+   Cart seeding, validation, error handling and the session handoff are all
+   proven (10 Aug). What is NOT yet proven end to end is what happens after the
+   customer reaches Zoho's checkout: GST, freight, payment, the sales order, and
+   whether the courier pipeline fires on a REAL web order rather than a manually
+   created one. Flipping this early points live customers at an untested path.
+
+   ⚠ IT ALSO REQUIRES A SHARED PARENT DOMAIN.
+   The handoff works by a `zcid` cookie that the browser must send to Zoho's
+   storefront host. That is only possible when this site and the storefront share
+   a registrable domain — `thelittlenest.co.nz` and `staging.thelittlenest.co.nz`
+   do. It CANNOT work from *.pages.dev, which is a public suffix. See
+   functions/api/cart.js.
    ========================================================================= */
 
 const SOURCE = {
-  mode: 'local',                                        // 'local' | 'zoho'
-  base: 'https://commerce.zoho.com.au/storefront/api/v1',
-  domain: 'staging.thelittlenest.co.nz',
+  mode: 'local',            // 'local' | 'zoho' — see the warning above
 };
 
 /* Pages live at the root and in /products/ and /categories/, so asset paths
@@ -313,20 +319,35 @@ function renderCart() {
 }
 
 /* Checkout hands the cart to Zoho, which owns payment, tax, freight and the
-   sales order. Until the store is published there is nothing to hand it to,
-   so say so plainly rather than failing silently. */
+   sales order.
+
+   ⚠ THIS NO LONGER TALKS TO ZOHO DIRECTLY, AND IT CANNOT.
+   Zoho's storefront API sends no CORS headers, so the previous version of this
+   function — a loop of cross-origin POSTs — could never have run in a browser.
+   It would have failed on the first request with "Failed to fetch". Verified
+   7 Aug and re-verified 10 Aug against a preflight that returns 400 with no
+   Access-Control-* headers at all.
+
+   Everything now goes through our own /api/cart Pages Function, which makes the
+   same calls server-to-server where CORS does not apply, then hands back a
+   session cookie so Zoho's hosted checkout shows the customer their own cart.
+   One request, one place errors can be reported from. */
 async function checkout() {
   if (SOURCE.mode !== 'zoho') {
     alert('Checkout is not connected yet.\n\n' +
-      'The shop, cart and freight all work. Payment needs the Zoho store ' +
-      'published so its Storefront API can take the order — that is the one ' +
-      'remaining step.');
+      'The shop, cart and freight all work. The ordering connection is built ' +
+      'and tested but stays switched off until a full test order has been put ' +
+      'through — that is the one remaining step.');
     return;
   }
-  /* Two SKUs on the approved list do not exist in Zoho at all (BD2382 and
-     BD3216F, verified 6 Aug against the live catalogue), so they have no
-     product_variant_id and Zoho cannot fulfil them. Fail loudly here rather than
-     dropping a line silently and taking payment for an order that is short. */
+  if (!Cart.lines.length) {
+    alert('Your Nest is empty.');
+    return;
+  }
+  /* Some SKUs on the approved price list have no Zoho record and so no
+     product_variant_id — currently BD2382, which is unpriced and POA. Zoho
+     cannot fulfil them. Fail loudly here rather than dropping a line silently
+     and taking payment for an order that is short. */
   const orphan = Cart.lines.filter(l => !l.vid);
   if (orphan.length) {
     alert('One or more items in your Nest cannot be ordered online yet:\n\n' +
@@ -334,15 +355,38 @@ async function checkout() {
       '\n\nPlease email sales@thelittlenest.co.nz and we will sort it directly.');
     return;
   }
-  for (const l of Cart.lines) {
-    await fetch(`${SOURCE.base}/cart`, {
+
+  const btn = document.querySelector('[data-checkout]');
+  const restore = btn ? btn.textContent : null;
+  if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
+
+  try {
+    const r = await fetch(PREFIX + 'api/cart', {
       method: 'POST',
-      headers: { 'domain-name': SOURCE.domain, 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ product_variant_id: l.vid, quantity: String(l.qty) }),
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        items: Cart.lines.map(l => ({ vid: l.vid, qty: l.qty })),
+      }),
     });
+    const data = await r.json().catch(() => null);
+
+    if (!r.ok || !data?.ok) {
+      alert((data && data.message) ||
+        'We could not start your order just now. Please try again in a moment, ' +
+        'or email sales@thelittlenest.co.nz and we will complete it for you.');
+      return;
+    }
+    /* Zoho owns the cart from here. The local Nest is deliberately NOT cleared:
+       if the customer abandons checkout and comes back, their basket is still
+       there. It is cleared on a confirmed order, not on a redirect. */
+    location.href = data.checkout_url;
+  } catch {
+    alert('We could not reach our ordering system. Please check your connection ' +
+      'and try again, or email sales@thelittlenest.co.nz.');
+  } finally {
+    if (btn) { btn.disabled = false; if (restore) btn.textContent = restore; }
   }
-  location.href = `https://${SOURCE.domain}/checkout`;
 }
 
 /* --- boot --------------------------------------------------------------- */
