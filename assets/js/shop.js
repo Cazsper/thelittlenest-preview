@@ -30,7 +30,7 @@
    ========================================================================= */
 
 const SOURCE = {
-  mode: 'local',            // 'local' | 'zoho' — see the warning above
+  mode: 'zoho',             // 'local' | 'zoho' — see the warning above
 };
 
 /* Pages live at the root and in /products/ and /categories/, so asset paths
