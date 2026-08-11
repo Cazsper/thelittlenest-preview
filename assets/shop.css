@@ -24,6 +24,8 @@
   letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--grey); margin-top: 18px;
 }
+.shop-head__search { margin-top: 32px; max-width: 420px; }
+.shop-head__search .shop-search { width: 100%; min-width: 0; background: var(--paper); }
 
 /* ── Breadcrumbs ─────────────────────────────────────────────────────── */
 

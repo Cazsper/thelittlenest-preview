@@ -249,6 +249,26 @@ function hydrateTools(tools) {
 
   q?.addEventListener('input', paint);
   sort?.addEventListener('change', paint);
+
+  /* Hero search proxy (shop.html only): a compact search field sits above the
+     category cards so customers can search without first scrolling past them.
+     It mirrors into the real [data-q] field below, which does the actual
+     filtering — there is only ever one live search state. */
+  const proxy = document.querySelector('[data-q-proxy]');
+  if (proxy && q) {
+    let scrolled = false;
+    proxy.addEventListener('input', () => {
+      q.value = proxy.value;
+      paint();
+      if (!scrolled && proxy.value.trim()) {
+        scrolled = true;
+        tools.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    proxy.addEventListener('keydown', e => {
+      if (e.key === 'Enter') tools.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 }
 
 /* --- cart page ---------------------------------------------------------- */
