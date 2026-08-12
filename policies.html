@@ -20,41 +20,17 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Cream linen bedding on a farmhouse bed, morning light">
 <meta name="twitter:image" content="https://cazsper.github.io/thelittlenest-preview/assets/img/og-image.jpg">
-<!-- Shared social card, added 6 Aug 2026. index.html had one; these four did not, while all five
-     declared twitter:card=summary_large_image — a large-image card with no image to put in it.
-     Replace with a page-specific 1200x630 frame when more photography exists. -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/tln.css">
 
-<!--
-  ============================================================================
-  FREIGHT RATE CARD — SOURCE CONFLICT, RESOLVED IN FAVOUR OF THE HANDOVER
-  ----------------------------------------------------------------------------
-  Four sources, two answers:
-
-    Handover doc §8 ("Approved / Locked")  → no minimum, under $30 = $9.90  ✓
-    Concept's own policies page            → no minimum, under $30 = $9.90  ✓
-    Brand Guide §09                        → $30 minimum, no sub-$30 tier   ✗
-    Concept's checkout code                → $30 minimum, blocks below it   ✗
-
-  Built to the handover card: it is the only source explicitly marked approved,
-  it is the later document, and the concept's own customer-facing page agrees
-  with it. The brand guide needs correcting either way.
-
-  THIS TABLE MUST MATCH ZOHO'S CONFIGURED SHIPPING ZONES EXACTLY. Verify before
-  go-live — a policy page that disagrees with what checkout charges is a Fair
-  Trading Act problem, not a copy problem.
-  ============================================================================
--->
 </head>
 
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<!-- Slim declarative bar. Facts only — no CTA chatter, per the voice rules. -->
 <div class="announce">
   <p>Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
 </div>
@@ -100,7 +76,6 @@
   <section class="container policies">
     <div class="policies__inner">
 
-      <!-- ── SHIPPING & FREIGHT ─────────────────────────────────────── -->
       <article class="policy" id="shipping">
         <p class="eyebrow">Shipping &amp; Freight · 01</p>
         <h2 class="serif">Shipping &amp; freight.</h2>
@@ -115,19 +90,6 @@
             urban delivery area.
           </p>
 
-          <!-- These four rows MUST match Zoho's configured shipping zones exactly, and the
-               boundaries are the part that matters. Read off Zoho Settings -> Sales ->
-               Shipping & Pickup -> Shipping Zones -> Domestic Shipping, 12 Aug 2026:
-                   NZD0.01 - NZD29.99      -> NZD9.90
-                   NZD30.00 - NZD149.99    -> NZD17.90
-                   NZD150.00 - NZD349.99   -> NZD27.90
-                   NZD350.00 - NZD99,999   -> NZD0.00
-               The previous wording said "$30 – $150" and "$151 – $350", which promised $17.90
-               on an order of exactly $150.00 while checkout charged $27.90, and left
-               $150.01–$150.99 undescribed. A published freight table that undercuts what
-               checkout charges is a Fair Trading Act problem, not a copy preference.
-               freight() in assets/js/shop.js uses the same inclusive lower bounds and is
-               correct; it was verified against this screen, not changed. -->
           <dl class="freight">
             <div><dt>Under $30</dt><dd>$9.90</dd></div>
             <div><dt>$30 – $149.99</dt><dd>$17.90</dd></div>
@@ -156,7 +118,6 @@
 
       <div class="rule"></div>
 
-      <!-- ── RETURNS & EXCHANGES ────────────────────────────────────── -->
       <article class="policy" id="returns">
         <p class="eyebrow">Returns &amp; Exchanges · 02</p>
         <h2 class="serif">Returns &amp; exchanges.</h2>
@@ -200,7 +161,6 @@
 
       <div class="rule"></div>
 
-      <!-- ── PRIVACY ────────────────────────────────────────────────── -->
       <article class="policy" id="privacy">
         <p class="eyebrow">Privacy Policy · 03</p>
         <h2 class="serif">Privacy policy.</h2>
@@ -248,7 +208,6 @@
 
       <div class="rule"></div>
 
-      <!-- ── TERMS OF TRADE ─────────────────────────────────────────── -->
       <article class="policy" id="terms">
         <p class="eyebrow">Terms &amp; Conditions · 04</p>
         <h2 class="serif">Terms of trade.</h2>

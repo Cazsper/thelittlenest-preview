@@ -20,36 +20,17 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Cream linen bedding on a farmhouse bed, morning light">
 <meta name="twitter:image" content="https://cazsper.github.io/thelittlenest-preview/assets/img/og-image.jpg">
-<!-- Shared social card, added 6 Aug 2026. index.html had one; these four did not, while all five
-     declared twitter:card=summary_large_image — a large-image card with no image to put in it.
-     Replace with a page-specific 1200x630 frame when more photography exists. -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/tln.css">
 
-<!--
-  NOTE ON THE FORM — updated 6 Aug 2026
-  -------------------------------------
-  The enquiry form is now the REAL Zoho form, embedded. It is Zoho Forms'
-  "SEND US YOUR ENQUIRY" (slug `ContactUs`), so a submission lands in Zoho and
-  cannot be lost.
-
-  Superseded: everything earlier about "replace this with Zoho Commerce's own form
-  component when the theme is ported." There is no theme port — this site is the
-  website and Zoho is the backend. Zoho Forms is the backend for enquiries.
-
-  The long comment on the embed block below explains why it is an iframe rather
-  than our own markup, and what replaces it once Cloudflare Pages is live. Read
-  that before changing anything here.
--->
 </head>
 
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<!-- Slim declarative bar. Facts only — no CTA chatter, per the voice rules. -->
 <div class="announce">
   <p>Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
 </div>
@@ -106,7 +87,7 @@
         </div>
         <div>
           <dt>Hours</dt>
-          <!-- Confirmed 9am–5pm. The brand guide's 8.30am is an error. -->
+          
           <dd>Mon — Fri<br><em>9am to 5pm NZST</em></dd>
         </div>
         <div>
@@ -119,51 +100,7 @@
     <div>
       <p class="eyebrow">Send A Message · 003</p>
 
-      <!--
-        LIVE ZOHO FORM, wired 6 Aug 2026. Replaces the `mailto:` stopgap.
-
-        HISTORY, because this field has been wrong twice.
-        1. Originally action="" method="post" — the browser posted back to
-           contact.html, the page reloaded, the customer saw what looked like
-           success, and the enquiry was gone. Silent data loss.
-        2. Then a `mailto:` submit. Better in intent, but a mailto form POST is
-           unreliable — Chromium-based browsers generally refuse it outright, so on
-           the browsers most customers use it did nothing visible at all.
-
-        WHY AN IFRAME AND NOT OUR OWN MARKUP.
-        The obvious thing is to keep the hand-built form and POST it to Zoho. That
-        does not work: Zoho Forms submits through its own script with a per-session
-        token, so a cross-origin POST from this site is rejected — silently. That is
-        the same failure mode as (1) and it is not worth the nicer typography.
-
-        The form embedded below is the REAL Zoho form, so a submission cannot be
-        lost: it lands in Zoho Forms' entries for "SEND US YOUR ENQUIRY".
-
-        NOTE THE FORM IDENTITY, because the handoffs had this wrong. There are two
-        forms in the Zoho Forms org, both created 14 Sep 2025:
-          · "Send Us Your Enquiry"  slug `SoftwareEvaluation`  <- NOT this one.
-            It is an unfinished template: Name, Email, Mobile, a five-star "Rate
-            this store" and an image upload. There is no message field, so nobody
-            could actually send an enquiry through it.
-          · "SEND US YOUR ENQUIRY"  slug `ContactUs`           <- THIS one.
-            Full name (First/Last), Email, Enquiry. Both were publicly shared and
-            enabled all along; neither was ever disabled.
-
-        THE UPGRADE, once Cloudflare Pages is live. Put a Pages Function at
-        /api/enquiry that takes a normal POST from our own markup and forwards it to
-        Zoho. That gets the site's own design AND guaranteed delivery. It needs a
-        backend, which is why it is not today's job.
-      -->
-      <!--
-        The sizing below is deliberately INLINE, not left to tln.css.
-
-        An iframe with no width defaults to 300px, so if the stylesheet is missing
-        for any reason the form renders as a narrow column and looks broken. That
-        is not hypothetical: on first deploy GitHub Pages served a cached tln.css
-        without these rules and the form rendered at 304px inside a 672px column.
-        Inline styles cannot be cached away, so the embed is correct on its own.
-        The matching rules in tln.css stay as the canonical version.
-      -->
+      
       <div class="form-embed" style="max-width:560px;margin-top:40px">
         <iframe
           title="Send us your enquiry"
