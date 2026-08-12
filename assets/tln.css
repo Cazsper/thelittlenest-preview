@@ -251,11 +251,24 @@ ul { list-style: none; margin: 0; padding: 0; }
   background: var(--paper); padding: 4px 8px;
   border: 1px solid var(--grey-line);
 }
-/* Filled image slot — see the note above .ph */
+/* Filled image slot — see the note above .ph.
+   TWO shapes are supported and both must work:
+     1. a bare <img>                              — the homepage lifestyle shots
+     2. <picture><source ...><img></picture>       — product imagery, which needs
+        AVIF/WebP negotiation (build-shop-pages.py img_markup)
+   The rule was `> img` only, a DIRECT child selector. Once product images
+   arrived wrapped in <picture> the image was no longer a direct child, so it
+   would have been left unpositioned and the 4:5 box would have collapsed —
+   on the shop grid, 173 times. Widened 12 Aug 2026. */
 .ph.has-img { background: none; border-color: var(--grey-line); }
 .ph.has-img::before { content: none; }
-.ph.has-img > img {
+.ph.has-img > img,
+.ph.has-img > picture {
   position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+.ph.has-img img {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
 }

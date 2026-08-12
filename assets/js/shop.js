@@ -194,6 +194,63 @@ function hydrateProduct(root) {
   paint();
 }
 
+/* --- product imagery ----------------------------------------------------- */
+/* ⚠ MIRRORS img_markup() / img_url() in build-shop-pages.py. Both render the
+   SAME tile -- the generator server-side, this one on hydration when a customer
+   searches or sorts. HANDOFF 8a records the trap: change one and not the other
+   and the grid changes appearance mid-session.
+
+   The DATA cannot drift, because `p.img` is written into catalogue.json by the
+   generator and read here. Only the MARKUP has to be kept in step by hand.
+
+   `p.img` is the compact record, expanded to filenames as `<stem>-<w>.<ext>`
+   (or `<stem>.<ext>` when the width is 0):
+       {f: stem, a: alt, w: 922, h: 1152, r: {avif: [400,800], jpg: [400,800,922]}}
+   Absent `img` means not photographed yet -> keep the striped placeholder. */
+
+const FB_ORDER = ['jpg', 'jpeg', 'webp', 'avif'];   // most decodable first
+
+/* Same numbers as SIZES_TILE in build-shop-pages.py, derived from shop.css:
+   .shop-grid is 4 cols (gap 28px) inside .container (max 1440, --pad 56),
+   3 cols <=1100px, 2 cols <=860px. Widest a tile renders is 311px. */
+const SIZES_TILE = '(max-width: 860px) 46vw, (max-width: 1100px) 30vw, 311px';
+/* .shop-line thumbnail column is 88px, 64px at <=560px. */
+const SIZES_THUMB = '(max-width: 560px) 64px, 88px';
+
+const imgUrl = (img, ext, w, prefix) =>
+  `${prefix}assets/img/products/${w ? `${img.f}-${w}` : img.f}.${ext}`;
+
+function imgMarkup(img, prefix, sizes, eager) {
+  if (!img || !img.r) return null;
+  const srcs = [];
+  for (const [ext, mime] of [['avif', 'image/avif'], ['webp', 'image/webp']]) {
+    const ws = (img.r[ext] || []).filter(w => w);
+    if (ws.length) {
+      const ss = ws.map(w => `${imgUrl(img, ext, w, prefix)} ${w}w`).join(', ');
+      srcs.push(`<source type="${mime}" srcset="${ss}" sizes="${sizes}">`);
+    }
+  }
+  const fbExt = FB_ORDER.find(x => img.r[x]);
+  if (!fbExt) return null;
+  const fbWs = img.r[fbExt];
+  const fbSs = fbWs.filter(w => w)
+    .map(w => `${imgUrl(img, fbExt, w, prefix)} ${w}w`).join(', ');
+  const load = eager ? 'fetchpriority="high"' : 'loading="lazy"';
+  const tag = `<img src="${imgUrl(img, fbExt, Math.max(...fbWs), prefix)}"`
+    + (fbSs ? ` srcset="${fbSs}" sizes="${sizes}"` : '')
+    + ` alt="${esc(img.a)}" width="${img.w}" height="${img.h}"`
+    + ` ${load} decoding="async">`;
+  return srcs.length ? `<picture>${srcs.join('')}${tag}</picture>` : tag;
+}
+
+/* The `.ph` block for a product, filled or striped. `extra` carries the
+   context class (shop-tile__ph / shop-line__ph) so callers stay one-liners. */
+function phBlock(p, prefix, sizes, extra, cap) {
+  const inner = imgMarkup(p && p.img, prefix, sizes, false);
+  const cls = `ph r-4-5${extra ? ' ' + extra : ''}${inner ? ' has-img' : ''}`;
+  return `<span class="${cls}">${inner || (cap ? '<span class="ph__cap">Photography to come</span>' : '')}</span>`;
+}
+
 /* --- search + sort on shop.html and category pages ---------------------- */
 
 function tile(p, prefix) {
@@ -208,7 +265,7 @@ function tile(p, prefix) {
         ? money(Math.min(...ps))
         : `${money(Math.min(...ps))} – ${money(Math.max(...ps))}`);
   return `<a class="shop-tile" href="${prefix}products/${esc(p.slug)}.html">
-    <span class="ph r-4-5 shop-tile__ph"><span class="ph__cap">Photography to come</span></span>
+    ${phBlock(p, prefix, SIZES_TILE, 'shop-tile__ph', true)}
     <span class="shop-tile__name">${esc(p.name)}</span>
     <span class="shop-tile__price">${price}</span>
   </a>`;
@@ -295,7 +352,7 @@ function renderCart() {
     <div class="shop-cart__lines">
       ${Cart.lines.map(l => `
         <div class="shop-line">
-          <span class="ph r-4-5 shop-line__ph"></span>
+          ${phBlock(Catalogue.product(l.pid), '', SIZES_THUMB, 'shop-line__ph', false)}
           <div class="shop-line__body">
             <a class="shop-line__name" href="products/${esc(l.slug)}.html">${esc(l.name)}</a>
             <p class="shop-line__meta">${esc(l.size)} · SKU ${esc(l.sku)}</p>
