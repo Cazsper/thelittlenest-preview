@@ -1123,6 +1123,64 @@ function renderAccount() {
    If any product failed to come back, this stops and says so, and the server
    independently checks the count as well. Two guards, because a silent content
    deletion is not a failure anyone would notice until a customer did. */
+/* The PRICE sync. A separate button writing a separate KV key, so it cannot
+   touch descriptions or photographs and they cannot touch it. Steps 1 and 2
+   are the same ids/fetch walk the description sync uses, and `fetch` already
+   carries a price per variant, so this costs no extra Zoho reads.
+
+   Same partial-harvest refusal, and for a sharper reason: the bundle REPLACES
+   the key, so a short harvest would drop prices back to whatever the built
+   catalogue says. A missing description is visible. A stale price is not. */
+async function syncPricesFromZoho(btn) {
+  const status = $('#pstatus');
+  const say = (msg) => { if (status) status.textContent = msg; };
+
+  busy(btn, true);
+  say('Asking Zoho what products it has…');
+  try {
+    const { ids, count, batch } = await call('/api/admin/zoho/ids');
+    const size = Math.max(1, Number(batch) || 20);
+
+    const rows = [];
+    const failed = [];
+    for (let i = 0; i < ids.length; i += size) {
+      say(`Reading prices from Zoho, ${Math.min(i + size, ids.length)} of ${count}…`);
+      const r = await call('/api/admin/zoho/fetch', {
+        method: 'POST', body: { ids: ids.slice(i, i + size) },
+      });
+      rows.push(...(r.rows || []));
+      failed.push(...(r.failed || []));
+    }
+
+    if (failed.length) {
+      say('');
+      toast(`${failed.length} product${failed.length === 1 ? '' : 's'} could not `
+        + 'be read from Zoho, so no prices were changed. Please try again.', true);
+      return;
+    }
+
+    say('Matching prices to the website…');
+    const done = await call('/api/admin/zoho/publish-prices', {
+      method: 'POST', body: { rows, expected: count },
+    });
+
+    say(done.written
+      ? `${done.count} price${done.count === 1 ? '' : 's'} brought across from `
+        + 'Zoho. The website updates within about a minute.'
+        + (done.skipped
+            ? ` ${done.skipped} size${done.skipped === 1 ? ' has' : 's have'} no `
+              + 'price in Zoho yet and was left as it is.'
+            : '')
+      : 'Zoho has no prices to bring across, so the website is unchanged.');
+    toast(done.message || 'Prices synced');
+  } catch (ex) {
+    say('');
+    toast(ex.message, true);
+  } finally {
+    busy(btn, false);
+  }
+}
+
 async function syncFromZoho(btn) {
   const status = $('#zstatus');
   const say = (msg) => { if (status) status.textContent = msg; };
@@ -1207,11 +1265,29 @@ async function renderProducts() {
     <p class="lede">${all.length} products from the price list. You can change
       the name shown on the website, add a description, and set the photograph.
       Prices, sizes and SKUs come from the price list and Zoho, so they are shown
-      here but cannot be edited.</p>
+      here but cannot be edited: change a price in Zoho and press
+      &ldquo;Sync prices from Zoho&rdquo; below.</p>
 
     <section class="card">
       <div class="card__head">
-        <h2>Descriptions written in Zoho</h2>
+        <h2>Prices from Zoho</h2>
+      </div>
+      <div class="card__body">
+        <p class="hint">When you change a price in Zoho, the website does not
+          change on its own. Press this to bring the new prices across.</p>
+        <p class="hint">Zoho always wins on price, because Zoho is what actually
+          charges the customer. Until you press this, the website can be showing
+          a different price from the one at checkout.</p>
+        <p>
+          <button class="btn" type="button" id="psync">Sync prices from Zoho</button>
+        </p>
+        <p class="hint" id="pstatus" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2>Descriptions and photos from Zoho</h2>
       </div>
       <div class="card__body">
         <p class="hint">If you write product descriptions in Zoho, press this to
@@ -1220,8 +1296,10 @@ async function renderProducts() {
         <p class="hint">Anything you have typed into a product below stays as it
           is. What you write here always beats what is in Zoho, so this will not
           overwrite your own wording.</p>
+        <p class="hint">This button does not touch prices, and the price button
+          above does not touch descriptions. They are separate on purpose.</p>
         <p>
-          <button class="btn" type="button" id="zsync">Sync from Zoho</button>
+          <button class="btn" type="button" id="zsync">Sync descriptions and photos</button>
         </p>
         <p class="hint" id="zstatus" role="status" aria-live="polite"></p>
       </div>
@@ -1239,6 +1317,7 @@ async function renderProducts() {
     <div id="plist" class="plist"></div>`;
 
   $('#zsync', view).addEventListener('click', (e) => syncFromZoho(e.currentTarget));
+  $('#psync', view).addEventListener('click', (e) => syncPricesFromZoho(e.currentTarget));
 
   const list = $('#plist', view);
   const search = $('#psearch', view);
