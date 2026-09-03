@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content manager · The Little Nest</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%231C1B17'/%3E%3Crect%20x='9'%20y='9'%20width='14'%20height='14'%20fill='%23FBF8F2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="app">
+  <nav class="rail" id="rail" aria-label="Sections">
+    <div class="rail__brand">The Little Nest<b>Content manager</b></div>
+    <div id="nav"></div>
+    <div class="rail__foot">
+      <div class="rail__who" id="who"></div>
+      <button class="btn btn--ghost btn--sm btn--wide" id="signout" type="button">
+        Sign out
+      </button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="btn btn--ghost btn--sm railtoggle" id="railtoggle"
+              type="button" aria-expanded="false" aria-controls="rail">Menu</button>
+      <h1 id="title">Loading…</h1>
+      <div class="topbar__spacer"></div>
+      <span class="dirty" id="dirty" hidden></span>
+      <button class="btn btn--ghost btn--sm" id="save" type="button" disabled>Save</button>
+      <button class="btn btn--sm" id="publish" type="button">Publish</button>
+    </header>
+
+    <main class="content" id="view" tabindex="-1">
+      <p class="lede">Loading the site content…</p>
+    </main>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<dialog id="modal">
+  <div class="card__body">
+    <h2 id="modal-title"></h2>
+    <p id="modal-body" class="lede" style="margin:0 0 4px"></p>
+    <div id="modal-extra"></div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="modal-cancel" type="button">Cancel</button>
+      <button class="btn" id="modal-ok" type="button">Confirm</button>
+    </div>
+  </div>
+</dialog>
+
+<input type="file" id="filepick" accept="image/jpeg,image/png,image/webp,image/avif" hidden>
+
+<script src="admin.js" defer></script>
+</body>
+</html>

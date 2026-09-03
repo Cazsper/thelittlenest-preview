@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · The Little Nest content manager</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%231C1B17'/%3E%3Crect%20x='9'%20y='9'%20width='14'%20height='14'%20fill='%23FBF8F2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<main class="signin">
+  <form class="signin__card" id="form" novalidate>
+    <p class="signin__mark">The Little Nest</p>
+    <h1>Content manager</h1>
+    <p class="signin__sub">Sign in to edit the website.</p>
+
+    <p class="msg msg--error" id="err" role="alert" aria-live="assertive" hidden></p>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" autocomplete="username"
+             required autofocus spellcheck="false" enterkeyhint="next">
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password"
+             autocomplete="current-password" required enterkeyhint="go">
+    </div>
+
+    <button class="btn btn--wide" type="submit" id="go">Sign in</button>
+
+    <p class="hint" style="margin-top:18px">
+      Accounts are created by an administrator. There is no sign-up: this
+      manages the website, not a customer account.
+    </p>
+  </form>
+</main>
+
+<script src="admin.js" defer></script>
+</body>
+</html>

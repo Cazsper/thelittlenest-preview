@@ -1,5 +1,5 @@
 /* ==========================================================================
-   THE LITTLE NEST — SHARED STYLESHEET
+   THE LITTLE NEST · SHARED STYLESHEET
    Brand Guide v1.0. Presentation only: no cart, no checkout, no auth.
 
    If Zoho Commerce's Edit Code will not host a static asset, paste the whole
@@ -19,7 +19,7 @@
   --grey-soft:  #d6d2c8;
   --grey-line:  #e6e1d6;
 
-  /* accents — sparingly. Terracotta is promo-only (freight upsell). */
+  /* accents · sparingly. Terracotta is promo-only (freight upsell). */
   --sage:       #5C6648;
   --terracotta: #C97A66;
 
@@ -121,7 +121,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 
 /* ── Announcement bar ────────────────────────────────────────────────
-   Declarative facts only — the voice rules forbid CTA chatter. Sits above
+   Declarative facts only · the voice rules forbid CTA chatter. Sits above
    the sticky header so it scrolls away rather than eating viewport. */
 .announce {
   background: var(--ink);
@@ -182,10 +182,21 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .nav a:hover, .nav a[aria-current="page"] { border-bottom-color: #000; }
 
-.wordmark { height: 60px; width: auto; }
+/* The real lockup, hosted 14 Aug 2026. Two crops of one artwork:
+   `logo-stack.png`  "THE LITTLE / NEST", no tagline  -> header
+   `logo-lockup.png` all three lines                  -> footer
+   The tagline is dropped in the header because at 44px tall it renders about
+   4px high, which is a smudge rather than words. Both are ink on transparent;
+   every surface the logo sits on is light (--shiplap header, --cream footer),
+   so there is no inverted variant in play. Height is set and width follows, so
+   the intrinsic width/height on the tag still reserves the right box. */
+.wordmark { display: block; height: 44px; width: auto; }
+.wordmark--foot { height: 82px; }
 .wordmark--inv { filter: invert(1); }
 
-/* Type-set fallback until logo.png is hosted. See README §Assets. */
+/* Kept as the fallback the site shipped with. Nothing uses it now, but the
+   rules cost nothing and a page that loses its <img> should not lose its
+   name. See README §Assets. */
 .wordmark-text { display: block; line-height: 1; }
 .wordmark-text b {
   display: block;
@@ -251,15 +262,14 @@ ul { list-style: none; margin: 0; padding: 0; }
   background: var(--paper); padding: 4px 8px;
   border: 1px solid var(--grey-line);
 }
-/* Filled image slot — see the note above .ph.
+/* Filled image slot · see the note above .ph.
    TWO shapes are supported and both must work:
-     1. a bare <img>                              — the homepage lifestyle shots
-     2. <picture><source ...><img></picture>       — product imagery, which needs
+     1. a bare <img> · the homepage lifestyle shots
+     2. <picture><source ...><img></picture> · product imagery, which needs
         AVIF/WebP negotiation (build-shop-pages.py img_markup)
    The rule was `> img` only, a DIRECT child selector. Once product images
    arrived wrapped in <picture> the image was no longer a direct child, so it
-   would have been left unpositioned and the 4:5 box would have collapsed —
-   on the shop grid, 173 times. Widened 12 Aug 2026. */
+   would have been left unpositioned and the 4:5 box would have collapsed · on the shop grid, 173 times. Widened 12 Aug 2026. */
 .ph.has-img { background: none; border-color: var(--grey-line); }
 .ph.has-img::before { content: none; }
 .ph.has-img > img,
@@ -274,8 +284,24 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .ph.has-img > .ph__cap { display: none; }
 
+/* Ratio utilities. WHICH ONE GOES WHERE WAS DECIDED BY PATRICK ON THE CALL OF
+   17 Aug 2026, and the rule is short enough to keep here:
+     · r-3-2  the homepage hero at the very top. "Three to two at the top."
+              He reversed himself onto this mid-call and then settled: "Just
+              keep it as it is." DO NOT CHANGE IT.
+     · r-2-3  CATEGORY imagery, everywhere it appears. He wanted these
+              "a little bit skinnier" so they line up with the artwork already
+              produced at 2:3.
+     · r-1-1  PRODUCT imagery, everywhere it appears, including the homepage
+              featured-product block. "Product photos, one to one."
+     · r-3-4  the homepage image strip. Editorial, never discussed, left alone.
+   `.r-4-5` was the old product and category ratio. It is now used by nothing
+   and has been REMOVED rather than left sitting here as dead CSS waiting to be
+   reintroduced by accident. If a 4:5 slot is ever wanted again, add it back
+   deliberately. */
 .r-3-2 { aspect-ratio: 3 / 2; }
-.r-4-5 { aspect-ratio: 4 / 5; }
+.r-2-3 { aspect-ratio: 2 / 3; }
+.r-1-1 { aspect-ratio: 1 / 1; }
 .r-3-4 { aspect-ratio: 3 / 4; }
 
 .badge {
@@ -387,7 +413,29 @@ ul { list-style: none; margin: 0; padding: 0; }
 .triptych__head {
   display: flex; justify-content: space-between; align-items: end;
   gap: 32px; margin-bottom: 40px;
+  /* WRAP, or this row is the one thing that overflows the page on a 320px
+     screen. It holds the eyebrow and the "View All Products →" .ulink, and
+     .ulink is `white-space: nowrap` (deliberately, the arrow must not orphan)
+     so it cannot shrink below about 186px. Without wrapping, 320px gave
+     scrollWidth 365 against clientWidth 320: 45px of horizontal scroll on the
+     homepage, measured 17 Aug 2026. Every other width was already clean.
+     Wrapping costs nothing above that: there is room for one line, so the row
+     stays exactly as it was and space-between still holds the two ends apart. */
+  flex-wrap: wrap;
+  row-gap: 14px;
 }
+/* ⚠ THIS ONE LABEL IS CMS-EDITABLE, so its length is not this stylesheet's to
+   assume. `home.triptych.viewall` is a `data-cms-link`, and `.ulink` is
+   `white-space: nowrap`, which means a long label is a single unbreakable box.
+   `flex-wrap` above cannot help with that: wrapping puts the item on its own
+   line, and an item WIDER THAN THE LINE still overflows. Published
+   "View Absolutely All Of Our Products Right Now" through the real CMS and the
+   homepage scrolled sideways at every width below 480px, 465px of content in a
+   320px viewport, with the fix for the short label already in place.
+   Letting it wrap costs a possible orphaned arrow on a long label. Sideways
+   scroll on every phone costs more. The built-in "View All Products →" is
+   186px and still never wraps, so nothing changes for the site as shipped. */
+.triptych__head .ulink { white-space: normal; max-width: 100%; }
 .triptych h3 {
   font-family: var(--serif);
   font-size: clamp(36px, 4.4vw, 72px);
@@ -427,7 +475,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .featured h3 em { font-style: italic; font-weight: 300; color: var(--grey); }
 .featured p { margin-top: 24px; font-size: 15px; line-height: 1.65; max-width: 460px; }
 
-.specs { margin-top: 32px; max-width: 460px; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; }
+.specs { margin-top: 32px; max-width: 560px; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; }
 .spec { padding: 20px 22px; }
 .spec:nth-child(2n) { border-left: 1px solid #000; }
 .spec:nth-child(n+3) { border-top: 1px solid #000; }
@@ -435,7 +483,7 @@ ul { list-style: none; margin: 0; padding: 0; }
   font-family: var(--caps); font-size: 10px; letter-spacing: 0.26em;
   text-transform: uppercase; color: var(--grey);
 }
-.spec dd { font-family: var(--serif); font-size: 26px; line-height: 1.2; margin: 6px 0 0; }
+.spec dd { font-family: var(--serif); font-size: 22px; line-height: 1.25; margin: 6px 0 0; }
 .featured__cta { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
 
 /* ── Ink anchor panel ────────────────────────────────────────────────── */
@@ -513,7 +561,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .details dd em { font-style: italic; font-weight: 300; color: var(--grey); }
 .details dd.is-muted { color: var(--grey); }
 
-/* Capped — full-column-width single-line inputs are hard to scan. */
+/* Capped · full-column-width single-line inputs are hard to scan. */
 .form { margin-top: 40px; display: grid; gap: 20px; max-width: 560px; }
 .field { display: block; }
 .field > span {
@@ -629,6 +677,10 @@ ul { list-style: none; margin: 0; padding: 0; }
   .header__inner { gap: 12px; }
   .header .wordmark-text b { font-size: 12px; letter-spacing: 0.18em; }
   .header .wordmark-text i { display: none; }
+  /* The header is a three-column grid on a 375px screen. At 44px the lockup is
+     136px wide and squeezes the nav toggle and the cart button. */
+  .wordmark { height: 30px; }
+  .wordmark--foot { height: 62px; }
   .cart { padding: 10px 14px; }
 
   .statement, .triptych { padding-block: 56px; }
@@ -656,7 +708,7 @@ ul { list-style: none; margin: 0; padding: 0; }
    cross-origin POST to Zoho Forms is rejected silently and a lost enquiry is
    worse than mismatched typography. These rules stop it reading as a bolted-on
    widget: full column width, no chrome, and a min-height so the box is the
-   right size before Zoho's resize message arrives — and if it never does. */
+   right size before Zoho's resize message arrives · and if it never does. */
 .form-embed {
   margin-top: 40px;
   max-width: 560px;

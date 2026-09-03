@@ -1,0 +1,416 @@
+/* ============================================================================
+   The Little Nest · content manager
+
+   SOURCE LIVES HERE, NOT IN build/admin/.
+   build/ is generated output: build-shop-pages.py regenerates it and it has
+   been wiped and restored more than once. Anything hand-written that lives
+   there is one `rm -rf build` away from being gone, which is exactly what
+   happened during development. copy_admin() in build-shop-pages.py copies this
+   directory into build/admin/ on every build.
+
+   Deliberately NOT the shop's stylesheet. The public site loads Cormorant
+   Garamond, Julius Sans One and Poppins from Google Fonts; the admin's
+   Content-Security-Policy is `font-src 'self'`, so no third-party font can load
+   here at all. That is the right trade for a tool: a system font stack renders
+   instantly, needs no network, and a CMS should look like an instrument rather
+   than a brochure. The brand palette carries the family resemblance.
+   ========================================================================= */
+
+:root {
+  --shiplap: #FBF8F2;
+  --paper: #FFFCF6;
+  --cream: #F6F2EA;
+  --ink: #1C1B17;
+  --grey: #6b6a64;
+  --grey-soft: #d6d2c8;
+  --grey-line: #e6e1d6;
+  --sage: #5C6648;
+  --terracotta: #C97A66;
+  --danger: #a4382a;
+  --ok: #3f6b3f;
+
+  --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+        Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --rail: 264px;
+  --radius: 8px;
+  --shadow: 0 1px 2px rgba(28, 27, 23, .06), 0 8px 24px rgba(28, 27, 23, .06);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--ui);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--shiplap);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--sage); }
+
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- sign in -------------------------------------------------------------- */
+
+.signin { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+
+.signin__card {
+  width: 100%; max-width: 400px;
+  background: var(--paper);
+  border: 1px solid var(--grey-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px 32px;
+}
+
+.signin__mark {
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--grey); margin: 0 0 6px;
+}
+.signin h1 { font-size: 22px; margin: 0 0 4px; font-weight: 600; }
+.signin__sub { color: var(--grey); font-size: 14px; margin: 0 0 28px; }
+
+/* --- forms ---------------------------------------------------------------- */
+
+.field { margin-bottom: 18px; }
+.field > label, .label {
+  display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;
+}
+.hint { font-size: 12px; color: var(--grey); margin: 6px 0 0; }
+.hint code { font-family: var(--mono); font-size: 11px; background: var(--cream);
+             padding: 1px 4px; border-radius: 3px; }
+
+input[type=text], input[type=email], input[type=password], input[type=url],
+input[type=number], select, textarea {
+  width: 100%; font: inherit; font-size: 15px; color: var(--ink);
+  background: #fff; border: 1px solid var(--grey-soft);
+  border-radius: 6px; padding: 10px 12px;
+}
+textarea { min-height: 96px; resize: vertical; line-height: 1.55; }
+textarea.rich { font-family: var(--mono); font-size: 13px; }
+input:disabled, textarea:disabled, select:disabled {
+  background: var(--cream); color: var(--grey); cursor: not-allowed;
+}
+
+/* --- buttons -------------------------------------------------------------- */
+
+.btn {
+  font: inherit; font-size: 14px; font-weight: 500;
+  padding: 10px 18px; border-radius: 6px;
+  border: 1px solid var(--ink); background: var(--ink); color: var(--paper);
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { background: #000; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--grey-soft); }
+.btn--ghost:hover:not(:disabled) { background: var(--cream); }
+.btn--danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn--danger:hover:not(:disabled) { background: var(--danger); color: #fff; }
+.btn--sm { padding: 6px 12px; font-size: 13px; }
+.btn--wide { width: 100%; justify-content: center; }
+
+/* A spinner that occupies the same box as the label it replaces, so a button
+   does not resize mid-click and move the thing under the pointer. */
+.btn[aria-busy="true"] { position: relative; color: transparent; }
+.btn[aria-busy="true"]::after {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  width: 15px; height: 15px;
+  border: 2px solid currentColor; border-top-color: transparent;
+  border-radius: 50%; color: var(--paper);
+  animation: spin .6s linear infinite;
+}
+.btn--ghost[aria-busy="true"]::after { color: var(--ink); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .btn[aria-busy="true"]::after { animation-duration: 2s; }
+}
+
+/* --- messages ------------------------------------------------------------- */
+
+.msg { border-radius: 6px; padding: 11px 14px; font-size: 14px;
+       margin-bottom: 18px; border: 1px solid transparent; }
+.msg--error { background: #fbeeec; border-color: #e8c8c2; color: var(--danger); }
+.msg--ok    { background: #eef3ee; border-color: #cadcca; color: var(--ok); }
+.msg--warn  { background: #fdf4ec; border-color: #efd9c1; color: #8a5a20; }
+.msg[hidden] { display: none; }
+
+/* --- app shell ------------------------------------------------------------ */
+
+.app { display: grid; grid-template-columns: var(--rail) 1fr; min-height: 100dvh; }
+
+.rail {
+  background: var(--paper); border-right: 1px solid var(--grey-line);
+  padding: 22px 16px; display: flex; flex-direction: column; gap: 6px;
+  position: sticky; top: 0; height: 100dvh; overflow-y: auto;
+}
+.rail__brand {
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--grey); padding: 0 10px 14px;
+  border-bottom: 1px solid var(--grey-line); margin-bottom: 10px;
+}
+.rail__brand b { display: block; font-size: 14px; letter-spacing: 0;
+                 text-transform: none; color: var(--ink); margin-top: 3px; }
+.rail__group { font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+               color: var(--grey); padding: 14px 10px 5px; }
+.rail a.nav { display: block; padding: 8px 10px; border-radius: 6px;
+              color: var(--ink); text-decoration: none; font-size: 14px; }
+.rail a.nav:hover { background: var(--cream); }
+.rail a.nav[aria-current="page"] { background: var(--ink); color: var(--paper); }
+.rail__foot { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--grey-line); }
+.rail__who { font-size: 13px; padding: 0 10px 10px; }
+.rail__who span { display: block; color: var(--grey); font-size: 12px; }
+
+.main { min-width: 0; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 14px; padding: 14px 28px;
+  background: rgba(251, 248, 242, .92); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--grey-line);
+}
+.topbar h1 { font-size: 17px; margin: 0; font-weight: 600; }
+.topbar__spacer { flex: 1; }
+
+.dirty { font-size: 12px; color: #8a5a20; background: #fdf4ec;
+         border: 1px solid #efd9c1; border-radius: 99px; padding: 4px 11px; }
+.dirty[hidden] { display: none; }
+
+.content { padding: 28px; max-width: 900px; }
+.lede { color: var(--grey); margin: -6px 0 26px; font-size: 14px; max-width: 62ch; }
+
+/* --- cards ---------------------------------------------------------------- */
+
+.card { background: var(--paper); border: 1px solid var(--grey-line);
+        border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
+.card__head { display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+              border-bottom: 1px solid var(--grey-line); background: var(--cream); }
+.card__head h2 { font-size: 15px; margin: 0; font-weight: 600; }
+.card__head .spacer { flex: 1; }
+.card__body { padding: 18px; }
+.card__body > h3 { font-size: 14px; margin: 22px 0 10px; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* --- toggle --------------------------------------------------------------- */
+
+.toggle { display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+          font-size: 13px; user-select: none; }
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle__track { width: 38px; height: 22px; border-radius: 99px;
+                 background: var(--grey-soft); position: relative;
+                 transition: background .15s; flex: none; }
+.toggle__track::after { content: ""; position: absolute; top: 3px; left: 3px;
+                        width: 16px; height: 16px; border-radius: 50%;
+                        background: #fff; transition: transform .15s; }
+.toggle input:checked + .toggle__track { background: var(--sage); }
+.toggle input:checked + .toggle__track::after { transform: translateX(16px); }
+.toggle input:focus-visible + .toggle__track { outline: 2px solid var(--sage);
+                                               outline-offset: 2px; }
+
+/* --- image picker --------------------------------------------------------- */
+
+.img { display: flex; gap: 14px; align-items: flex-start; }
+.img__preview {
+  width: 132px; flex: none; aspect-ratio: 4 / 5;
+  background: var(--cream) repeating-linear-gradient(45deg,
+    transparent 0 8px, rgba(28,27,23,.03) 8px 16px);
+  border: 1px solid var(--grey-line); border-radius: 6px; overflow: hidden;
+  display: grid; place-items: center;
+}
+.img__preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.img__preview span { font-size: 11px; color: var(--grey); text-align: center; padding: 8px; }
+.img__side { flex: 1; min-width: 0; }
+.img__meta { font-size: 12px; color: var(--grey); margin: 8px 0 0;
+             font-family: var(--mono); word-break: break-all; }
+.img__actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+
+/* --- repeatable items ----------------------------------------------------- */
+
+.item { border: 1px solid var(--grey-line); border-radius: 6px;
+        margin-bottom: 12px; background: #fff; }
+.item__bar { display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+             background: var(--cream); border-bottom: 1px solid var(--grey-line);
+             border-radius: 6px 6px 0 0; }
+.item__bar strong { font-size: 13px; font-weight: 600; flex: 1;
+                    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item__body { padding: 14px; }
+.item--hidden { opacity: .55; }
+.iconbtn { border: 1px solid var(--grey-soft); background: #fff; border-radius: 5px;
+           width: 26px; height: 26px; line-height: 1; cursor: pointer;
+           font-size: 13px; color: var(--ink); flex: none; }
+.iconbtn:hover:not(:disabled) { background: var(--cream); }
+.iconbtn:disabled { opacity: .35; cursor: not-allowed; }
+
+/* --- media library -------------------------------------------------------- */
+
+.media { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+         gap: 14px; }
+.media__cell { border: 1px solid var(--grey-line); border-radius: 6px;
+               overflow: hidden; background: #fff; text-align: left; padding: 0;
+               font: inherit; margin: 0; }
+button.media__cell { cursor: pointer; }
+button.media__cell:hover { border-color: var(--ink); }
+.media__cell img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+                   background: var(--cream); }
+.media__cell figcaption { padding: 8px 10px; font-size: 12px; }
+.media__cell figcaption b { display: block; font-weight: 500; overflow: hidden;
+                            text-overflow: ellipsis; white-space: nowrap; }
+.media__cell figcaption span { color: var(--grey); font-size: 11px; }
+
+.drop { border: 1.5px dashed var(--grey-soft); border-radius: var(--radius);
+        padding: 30px; text-align: center; color: var(--grey);
+        margin-bottom: 20px; background: var(--paper); }
+.drop.over { border-color: var(--sage); background: #f2f5f0; color: var(--ink); }
+
+/* --- table ---------------------------------------------------------------- */
+
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th, .table td { text-align: left; padding: 10px 12px;
+                       border-bottom: 1px solid var(--grey-line); }
+.table th { font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+            color: var(--grey); font-weight: 600; }
+.table tr:last-child td { border-bottom: 0; }
+.tablewrap { overflow-x: auto; }
+
+.pill { font-size: 11px; border-radius: 99px; padding: 2px 9px;
+        border: 1px solid var(--grey-soft); color: var(--grey); }
+.pill--admin { border-color: var(--sage); color: var(--sage); }
+.pill--off { border-color: var(--danger); color: var(--danger); }
+
+/* --- modal ---------------------------------------------------------------- */
+
+dialog { border: 1px solid var(--grey-line); border-radius: var(--radius);
+         padding: 0; max-width: 560px; width: calc(100vw - 32px);
+         background: var(--paper); color: var(--ink); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(28, 27, 23, .45); }
+dialog .card__body { padding: 20px; }
+dialog h2 { margin: 0 0 8px; font-size: 17px; }
+.modal__actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* --- toast ---------------------------------------------------------------- */
+
+.toasts { position: fixed; right: 18px; bottom: 18px; z-index: 100;
+          display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.toast { background: var(--ink); color: var(--paper); padding: 11px 16px;
+         border-radius: 6px; font-size: 14px; box-shadow: var(--shadow);
+         max-width: 340px; }
+.toast--error { background: var(--danger); }
+
+/* --- products -------------------------------------------------------------
+   173 rows, so each one is a collapsed card that costs a single line until it
+   is opened. The editors inside are the same field controls every other screen
+   uses; only the row chrome is new. */
+
+.plist { display: grid; gap: 10px; }
+.prow .card__head { gap: 10px; }
+.prow__meta { font-size: 12px; color: var(--grey); white-space: nowrap;
+              overflow: hidden; text-overflow: ellipsis; max-width: 42%; }
+
+@media (max-width: 620px) {
+  /* The category and price line is the first thing worth losing on a phone:
+     both are read-only here and both are repeated inside the opened row. */
+  .prow__meta { display: none; }
+}
+
+/* --- shop order -----------------------------------------------------------
+   Up to 173 rows, so each one is a single flex line rather than a card. The
+   controls reuse `.iconbtn` from the repeatable-items block above, which is
+   what makes this feel like the category list it is modelled on. */
+
+.ord__tabs { display: flex; gap: 8px; }
+.ord__bulk { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+
+.ord { display: flex; flex-direction: column; gap: 6px; }
+.ord__row {
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid var(--grey-line); border-radius: 6px;
+  padding: 7px 10px; background: #fff;
+}
+/* Un-featured rows, only ever seen in the Full range tab. Quieter, so which
+   products are featured is readable by scanning rather than by reading 173
+   stars. */
+.ord__row--plain { background: var(--cream); }
+/* ⚠ `input.ord__pos`, NOT `.ord__pos`. The base rule near the top of this file
+   is `input[type=number], select, textarea { width: 100% }`, and an attribute
+   selector outranks a bare class, so the plain version lost: the position box
+   stretched to 784px and squeezed the name and the arrows out of the row
+   entirely. Measured in a browser on 17 Aug 2026, not guessed. `renderGroup`
+   sidesteps the same rule with an inline style; this is the same fix done in
+   the stylesheet. */
+input.ord__pos {
+  width: 62px; flex: none; text-align: center;
+  font-family: var(--mono); font-size: 12px;
+}
+.ord__name { flex: 1; min-width: 0; font-size: 13px;
+             overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ord__cat { font-size: 12px; color: var(--grey); white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; max-width: 26%; }
+.ord__acts { display: flex; gap: 5px; flex: none; }
+
+/* ⚠ THE ROW STACKS ON A PHONE, and it has to.
+   Six controls and a product name do not fit on one 320px line. Measured at
+   320px on 17 Aug 2026: the position box, five 26px buttons and their gaps take
+   224 of the 246 available pixels and the NAME COLLAPSED TO 12px WIDE, so the
+   screen was six identical rows of arrows with nothing to say which product
+   each one moved. No horizontal overflow, no error, and completely unusable.
+
+   Two lines instead: position and name on the first, the controls on the
+   second, right-aligned under them. The buttons also grow, which they can do
+   safely here because `.ord__acts .iconbtn` is scoped to this screen and the
+   26px `.iconbtn` shared with the category list is untouched. */
+@media (max-width: 620px) {
+  .ord__row {
+    display: grid; align-items: center;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "pos name" "acts acts";
+    gap: 10px; padding: 9px 10px;
+  }
+  input.ord__pos { grid-area: pos; width: 52px; }
+  .ord__name { grid-area: name; }
+  /* The category is the first thing worth losing: the row is still identified
+     by name, and the arrows are what the screen is for. */
+  .ord__cat { display: none; }
+  .ord__acts { grid-area: acts; justify-content: flex-end; gap: 8px; }
+  .ord__acts .iconbtn { width: 38px; height: 34px; font-size: 15px; }
+}
+
+/* --- responsive ----------------------------------------------------------- */
+
+.railtoggle { display: none; }
+
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .railtoggle { display: inline-flex; }
+  .rail { position: fixed; inset: 0 auto 0 0; width: min(280px, 86vw);
+          z-index: 60; transform: translateX(-100%);
+          transition: transform .2s ease; height: 100dvh; box-shadow: var(--shadow); }
+  .rail[data-open="true"] { transform: none; }
+  .scrim { position: fixed; inset: 0; background: rgba(28,27,23,.4); z-index: 50; }
+  .scrim[hidden] { display: none; }
+  .content { padding: 18px; }
+  .topbar { padding: 12px 18px; gap: 8px; }
+  .topbar h1 { font-size: 15px; }
+  .grid2 { grid-template-columns: 1fr; }
+  .img { flex-direction: column; }
+  .img__preview { width: 100%; aspect-ratio: 16 / 9; }
+  .toasts { left: 18px; right: 18px; align-items: stretch; }
+  .toast { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .rail { transition: none; } }
+
+/* The size picker inside a Photographs row, added 2 Sep 2026.
+   Narrow on purpose: it sits under an image thumbnail, and a full-width select
+   reads as the more important of the two, which it is not. */
+.field--variant { max-width: 22rem; }
+.field--variant select { width: 100%; }

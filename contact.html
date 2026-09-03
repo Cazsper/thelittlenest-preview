@@ -4,13 +4,13 @@
   <meta name="robots" content="noindex, nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contact — The Little Nest</title>
+<title>Contact · The Little Nest</title>
 <meta name="description" content="Questions about a product, a bulk order, or anything else. Mon to Fri, 9am to 5pm NZST. sales@thelittlenest.co.nz">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23FBF8F2'/%3E%3Crect%20x='9'%20y='9'%20width='14'%20height='14'%20fill='%231C1B17'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://thelittlenest.co.nz/contact">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Little Nest">
-<meta property="og:title" content="Contact — The Little Nest">
+<meta property="og:title" content="Contact · The Little Nest">
 <meta property="og:description" content="Questions about a product, a bulk order, or anything else. Mon to Fri, 9am to 5pm NZST. sales@thelittlenest.co.nz">
 <meta property="og:url" content="https://thelittlenest.co.nz/contact">
 <meta property="og:locale" content="en_NZ">
@@ -24,15 +24,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tln.css">
+<link rel="stylesheet" href="assets/tln.css?v=f638d0ef">
 
 </head>
 
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<div class="announce">
-  <p>Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
+<div class="announce" data-cms-if="global.announce.visible">
+  <p data-cms="global.announce.text">Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
 </div>
 
 <header class="header">
@@ -45,14 +45,12 @@
       <a href="sustainability.html">Sustainability</a>
       <a href="contact.html" aria-current="page">Contact</a>
     </nav>
-    <a href="index.html" aria-label="The Little Nest — home">
-      <span class="wordmark-text">
-        <b>The Little Nest</b>
-        <i>Take Your Comfort Home.</i>
-      </span>
+    <a href="index.html" aria-label="The Little Nest · home">
+      <img class="wordmark" src="assets/img/logo-stack.png" alt="The Little Nest" width="912" height="296" fetchpriority="high" decoding="async">
     </a>
     <div class="header__actions">
-      <a class="account" href="account.html">Sign In</a>
+      
+      <a class="account" href="admin/">Sign In</a>
       <a class="cart" href="cart.html">Nest <span class="cart__count" data-cart-count>0</span></a>
     </div>
   </div>
@@ -63,11 +61,11 @@
   <section class="masthead">
     <div class="container masthead__inner">
       <div>
-        <p class="eyebrow">Get In Touch · 001</p>
-        <h1 class="serif">Contact.</h1>
+        <p data-cms="contact.masthead.eyebrow" class="eyebrow">Get In Touch · 001</p>
+        <h1 data-cms="contact.masthead.title" class="serif">Contact.</h1>
       </div>
-      <p class="masthead__lede">
-        Questions about a product, a bulk order, or anything else &mdash; we're here.
+      <p data-cms="contact.masthead.lede" class="masthead__lede">
+        Questions about a product, a bulk order, or anything else &middot; we're here.
       </p>
     </div>
   </section>
@@ -75,7 +73,7 @@
   <section class="container contact">
 
     <div>
-      <p class="eyebrow">Details · 002</p>
+      <p data-cms="contact.body.eyebrow_details" class="eyebrow">Details · 002</p>
       <dl class="details">
         <div>
           <dt>Email</dt>
@@ -88,7 +86,7 @@
         <div>
           <dt>Hours</dt>
           
-          <dd>Mon — Fri<br><em>9am to 5pm NZST</em></dd>
+          <dd>Mon to Fri<br><em>9am to 5pm NZST</em></dd>
         </div>
         <div>
           <dt>Based In</dt>
@@ -98,7 +96,7 @@
     </div>
 
     <div>
-      <p class="eyebrow">Send A Message · 003</p>
+      <p data-cms="contact.body.eyebrow_form" class="eyebrow">Send A Message · 003</p>
 
       
       <div class="form-embed" style="max-width:560px;margin-top:40px">
@@ -112,7 +110,7 @@
           data-zf-embed></iframe>
       </div>
 
-      <p class="form__note">
+      <p data-cms="contact.body.fallback" class="form__note">
         We reply within one business day. If the form above does not load, or your
         enquiry is urgent, email us directly at
         <a href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
@@ -140,13 +138,10 @@
   <div class="container">
     <div class="footer__grid">
       <div>
-        <span class="wordmark-text wordmark-text--lg">
-          <b>The Little Nest</b>
-          <i>Take Your Comfort Home.</i>
-        </span>
-        <p class="footer__blurb">
-          Hospitality bedding, towelling and accessories, supplied from Aotearoa to
-          short-stay hosts, lodges and homes that prefer their linen done properly.
+        <img class="wordmark wordmark--foot" src="assets/img/logo-lockup.png" alt="The Little Nest · Take Your Comfort Home" width="912" height="385" loading="lazy" decoding="async">
+        <p data-cms="global.footer.blurb" class="footer__blurb">
+          Beautiful bedding, bath linen and home comforts, thoughtfully sourced in Aotearoa
+          for those who believe the everyday deserves to feel a little more special.
         </p>
       </div>
 
@@ -178,9 +173,9 @@
 
       <div>
         <h2>Contact</h2>
-        <a class="footer__email" href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
+        <a data-cms="global.footer.email" class="footer__email" href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
         <p class="footer__meta">thelittlenest.co.nz</p>
-        <p class="footer__hours">Mon — Fri · 9am to 5pm NZST</p>
+        <p data-cms="global.footer.hours" class="footer__hours">Mon to Fri · 9am to 5pm NZST</p>
       </div>
     </div>
 
@@ -188,11 +183,12 @@
 
     <div class="footer__base">
       <span>© <span data-year>2026</span> The Little Nest. Aotearoa New Zealand.</span>
-      <span>Take Your Comfort Home</span>
+      <span data-cms="global.footer.tagline">Take Your Comfort Home</span>
     </div>
   </div>
 </footer>
 
-<script src="assets/tln.js"></script>
+<script src="assets/tln.js?v=afb8c600"></script>
+<script src="assets/js/analytics.js"></script>
 </body>
 </html>

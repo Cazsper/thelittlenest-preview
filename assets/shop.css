@@ -1,6 +1,6 @@
 /* ============================================================================
-   THE LITTLE NEST — SHOP STYLES
-   Extends tln.css. Uses its tokens only — no new colours, no new typefaces.
+   THE LITTLE NEST · SHOP STYLES
+   Extends tln.css. Uses its tokens only · no new colours, no new typefaces.
    Loaded after tln.css by shop.html.
    ========================================================================= */
 
@@ -24,8 +24,25 @@
   letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--grey); margin-top: 18px;
 }
-.shop-head__search { margin-top: 32px; max-width: 420px; }
-.shop-head__search .shop-search { width: 100%; min-width: 0; background: var(--paper); }
+/* ── Product search, above "Everything, A-Z" ─────────────────────────────
+   Moved out of `.shop-head` on 17 Aug 2026. It replaces `.shop-head__search`,
+   which was the old hero position and is gone along with its proxy input.
+
+   SPACING IS THE WHOLE JOB HERE. `.shop-sec` carries `padding-top: 72px`, so
+   dropping a field immediately above one would have left the search stranded
+   in the middle of a 72px gap, reading as the tail of the category grid rather
+   than the head of the A-Z list. The rule below takes that 72px for itself and
+   the adjacent-sibling rule collapses the heading's own gap to 24px, so the
+   field and the heading it belongs to read as one block. */
+.shop-find {
+  max-width: var(--container); margin: 0 auto;
+  padding-inline: var(--pad); padding-top: 72px;
+}
+.shop-find .shop-search {
+  width: 100%; max-width: 420px; min-width: 0;
+  background: var(--paper);
+}
+.shop-find + .shop-sec { padding-top: 24px; }
 
 /* ── Breadcrumbs ─────────────────────────────────────────────────────── */
 
@@ -50,7 +67,10 @@
 .shop-cat { display: block; text-decoration: none; color: inherit; }
 .shop-cat__media {
   display: block; position: relative;
-  aspect-ratio: 4 / 5; overflow: hidden;
+  /* 2:3, CATEGORY ratio, Patrick 17 Aug: "two to three for the category".
+     Also covers the CMS-rendered category tiles, which reuse this class
+     (cms/inject.js 'categories.items'), so one rule holds both paths. */
+  aspect-ratio: 2 / 3; overflow: hidden;
   border: 1px solid var(--grey-line);
   background: var(--cream);
 }
@@ -114,6 +134,33 @@
 
 .shop-empty { color: var(--grey); padding: 48px 0; grid-column: 1 / -1; }
 
+/* ── "The rest of the range" divider ─────────────────────────────────────
+   Sits INSIDE `.shop-grid`, spanning every column, so the tiles above and
+   below it stay on the same column tracks. Splitting the featured block and
+   the remainder into two separate grids would let the two halves size their
+   columns independently and visibly misalign at the seam.
+
+   It renders ONLY when something has been removed from Featured. In the
+   shipped configuration the whole range is featured, so nothing below the
+   grid's first block exists and this never appears. Deliberately quieter than
+   `.shop-sec h2`: it is a divider within one section, not a new section. */
+.shop-grid__break {
+  grid-column: 1 / -1;
+  margin: 24px 0 0;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--grey-line);
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  font-family: var(--caps); font-weight: inherit;
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--grey);
+}
+.shop-grid__break span { letter-spacing: 0.28em; }
+/* The grid's own `gap` already spaces this from the tile above it; without
+   this the first row of the remainder sits a full 48px gap plus the margin
+   below the rule, which reads as a much bigger break than it is. */
+.shop-grid__break + .shop-tile { margin-top: -8px; }
+
 /* ── Product grid ────────────────────────────────────────────────────── */
 
 .shop-grid {
@@ -122,7 +169,13 @@
   padding-top: 48px; padding-bottom: 96px;
 }
 .shop-tile { display: block; text-decoration: none; color: inherit; }
-.shop-tile__ph { display: block; aspect-ratio: 4 / 5; }
+/* NO aspect-ratio here on purpose. This class is only ever emitted by
+   ph_block() / phBlock(), which always prepend `ph r-1-1`, so the ratio comes
+   from that one utility in tln.css. It used to be restated here as well, which
+   meant the product ratio lived in two files that could silently disagree
+   depending on stylesheet order. One source instead of a comment asking two to
+   stay in step. */
+.shop-tile__ph { display: block; }
 .shop-tile__name {
   display: block; margin-top: 20px;
   font-family: var(--serif); font-size: 22px; line-height: 1.2;
@@ -207,6 +260,70 @@
   border-top: 1px solid var(--grey-line); padding-top: 20px;
 }
 
+/* ── Product page content sections: Description, Shipping ─────────────
+   Added 14 Aug 2026. Patrick asked for a branded heading above the CMS
+   description and for Shipping to become its own titled section lower down
+   the page instead of a loose line above the description.
+
+   ⚠ NAMED `prod-sec`, NOT `shop-sec`. `.shop-sec` already exists above
+   (line 81) as the shop and category page section heading, with
+   `padding-top: 72px`. Naming this block `shop-sec` put a later, weaker
+   rule on the same class: the shop page's "Shop by category" and
+   "Everything, A-Z" headings lost 52px of padding and gained a border they
+   were never meant to have, and `.shop-sec h2` leaked a second hairline
+   under this block's headings. That shipped to production on 14 Aug and was
+   caught by reading shop.html rather than by any test. Do not reuse a
+   `shop-` prefix for product-page-only furniture.
+
+   No new visual language is introduced. The heading reuses the type of the
+   existing `.eyebrow` (var(--caps), 11px, 0.28em, uppercase, --grey) so it
+   reads as the same family as the section label already at the top of the
+   page, and the rule reuses --grey-line exactly as .shop-ship did. */
+.prod-sec {
+  margin-top: 26px;
+  border-top: 1px solid var(--grey-line);
+  padding-top: 20px;
+}
+
+/* Related products, product pages only. Reuses .shop-grid and .shop-tile
+   as-is (see build-shop-pages.py) -- this rule is only the section-level
+   rhythm: the 1px hairline break every other section on the page already
+   uses, matching .prod-sec above rather than inventing a second pattern. */
+.shop-related {
+  border-top: 1px solid var(--grey-line);
+  padding-top: 56px;
+}
+.shop-related .shop-grid { padding-top: 24px; }
+.prod-sec__h {
+  font-family: var(--caps); font-weight: 400;
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--grey);
+  margin: 0 0 14px;
+}
+.prod-sec__body {
+  color: var(--ink); font-size: 15px; line-height: 1.7;
+  max-width: 46ch;                    /* matches .shop-note's measure */
+}
+.prod-sec__body > :first-child { margin-top: 0; }
+.prod-sec__body > :last-child  { margin-bottom: 0; }
+.prod-sec__body p  { margin: 0 0 12px; }
+/* tln.css resets `list-style: none` globally, which is right for the nav and
+   the footer and wrong here: Patrick asked for "actual round bullet points"
+   when Steph types a dash. Restored inside this block only, on BOTH ul and li
+   because the reset lands on both. */
+.prod-sec__body ul { margin: 0 0 12px; padding-left: 20px; list-style: disc; }
+.prod-sec__body li { margin-bottom: 6px; list-style: disc; }
+.prod-sec__body li::marker { color: var(--grey); }
+.prod-sec__body li:last-child { margin-bottom: 0; }
+.prod-sec__body a { color: inherit; }
+
+/* Inside a section the divider and spacing belong to .prod-sec, so the
+   standalone treatment .shop-ship carries on its own is cancelled. The rule
+   above is left intact for any page that still uses it bare. */
+.prod-sec .shop-ship {
+  margin-top: 0; border-top: 0; padding-top: 0;
+}
+
 /* ── Cart ────────────────────────────────────────────────────────────── */
 
 .shop-cart {
@@ -220,7 +337,10 @@
   padding: 26px 0; border-bottom: 1px solid var(--grey-line);
 }
 .shop-line:first-child { border-top: 1px solid var(--grey-line); }
-.shop-line__ph { aspect-ratio: 4 / 5; }
+/* The cart/Nest line thumbnail is the same product photograph and so takes the
+   same 1:1, also from `r-1-1`. Worth naming because a grep for the tile class
+   alone would miss this slot entirely. The rule is now empty of ratio for the
+   reason given above .shop-tile__ph. */
 .shop-line__name {
   font-family: var(--serif); font-size: 21px;
   text-decoration: none; color: inherit;
@@ -278,4 +398,43 @@
   .shop-head { padding-top: 48px; }
   .shop-line { grid-template-columns: 64px 1fr; row-gap: 14px; }
   .shop-line__price { grid-column: 2; text-align: right; }
+}
+
+/* ---- product gallery thumbnails, added 2 Sep 2026 -------------------------
+   The strip is injected at the edge by cms/products.js, so nothing in build/
+   ever emits this markup. These rules still have to ship in the built
+   stylesheet or the strip appears unstyled the first time anyone publishes a
+   gallery, which is the sort of thing that only shows up in production.
+
+   The hero keeps the r-1-1 box it already had; the strip sits beneath it, so
+   no existing layout moves for a product with a single photograph. */
+.prod-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.prod-thumb {
+  padding: 0;
+  width: 64px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--grey-line);
+  border-radius: 2px;
+  background: none;
+  cursor: pointer;
+}
+.prod-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* The current one, and keyboard focus, read the same way on purpose: both mean
+   "this is the one you are acting on". */
+.prod-thumb[aria-current="true"] { border-color: var(--ink); outline: 1px solid var(--ink); }
+.prod-thumb:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .prod-thumb { transition: opacity .15s ease; }
+  .prod-thumb:hover { opacity: .82; }
 }

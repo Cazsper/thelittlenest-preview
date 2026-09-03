@@ -4,13 +4,13 @@
   <meta name="robots" content="noindex, nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Little Nest — Take Your Comfort Home</title>
+<title>The Little Nest · Take Your Comfort Home</title>
 <meta name="description" content="A hospitality linen house from Aotearoa. Beds, sheeting, towelling and room accessories built for back-to-back guest stays, finished for the bedroom you keep for yourself.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23FBF8F2'/%3E%3Crect%20x='9'%20y='9'%20width='14'%20height='14'%20fill='%231C1B17'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://thelittlenest.co.nz/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Little Nest">
-<meta property="og:title" content="The Little Nest — Take Your Comfort Home">
+<meta property="og:title" content="The Little Nest · Take Your Comfort Home">
 <meta property="og:description" content="A hospitality linen house from Aotearoa. Beds, sheeting, towelling and room accessories built for back-to-back guest stays, finished for the bedroom you keep for yourself.">
 <meta property="og:url" content="https://thelittlenest.co.nz/">
 <meta property="og:locale" content="en_NZ">
@@ -24,15 +24,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tln.css">
+<link rel="stylesheet" href="assets/tln.css?v=f638d0ef">
 
 </head>
 
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<div class="announce">
-  <p>Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
+<div class="announce" data-cms-if="global.announce.visible">
+  <p data-cms="global.announce.text">Free freight over $350 &nbsp;·&nbsp; 48 hour despatch NZ-wide &nbsp;·&nbsp; Prices GST inclusive</p>
 </div>
 
 <header class="header">
@@ -47,16 +47,13 @@
       <a href="contact.html">Contact</a>
     </nav>
 
-    <a href="index.html" aria-label="The Little Nest — home">
-      <span class="wordmark-text">
-        <b>The Little Nest</b>
-        <i>Take Your Comfort Home.</i>
-      </span>
+    <a href="index.html" aria-label="The Little Nest · home">
+      <img class="wordmark" src="assets/img/logo-stack.png" alt="The Little Nest" width="912" height="296" fetchpriority="high" decoding="async">
     </a>
 
     <div class="header__actions">
       
-      <a class="account" href="account.html">Sign In</a>
+      <a class="account" href="admin/">Sign In</a>
       <a class="cart" href="cart.html">
         Nest
         <span class="cart__count" data-cart-count>0</span>
@@ -67,39 +64,39 @@
 
 <main id="main">
 
-  <section class="container hero">
+  <section data-cms-order="home.hero" data-cms-if="home.hero.visible" class="container hero">
     <div class="hero__grid">
       <div>
-        <p class="eyebrow">Aotearoa New&nbsp;Zealand · 001</p>
-        <h1 class="serif">Take Your<br><em>Comfort</em><br>Home.</h1>
+        <p data-cms="home.hero.eyebrow" class="eyebrow">Aotearoa New&nbsp;Zealand</p>
+        <h1 data-cms="home.hero.title" class="serif">Take Your<br><em>Comfort</em><br>Home.</h1>
         <div class="hero__cta">
-          <a class="btn" href="shop.html">Shop the Range →</a>
-          <a class="btn btn--ghost" href="about.html">Our Standard</a>
+          <a data-cms-link="home.hero.cta_primary" class="btn" href="shop.html">Shop the Range →</a>
+          <a data-cms-link="home.hero.cta_secondary" class="btn btn--ghost" href="about.html">Our Standard</a>
         </div>
       </div>
 
       <div>
         <div class="featured__media">
-          <div class="ph r-3-2 has-img"><img src="assets/img/01-hero.jpg" alt="Cream linen bedding on a farmhouse bed in a whitewashed room, morning light through a small window" width="1100" height="733" fetchpriority="high" decoding="async"></div>
+          <div class="ph r-3-2 has-img"><img data-cms-img="home.hero.image" src="assets/img/01-hero.jpg" alt="Cream linen bedding on a farmhouse bed in a whitewashed room, morning light through a small window" width="1100" height="733" fetchpriority="high" decoding="async"></div>
           
-          <span class="badge badge--hero">Est. 2024</span>
+          <span data-cms="home.hero.badge" class="badge badge--hero">Est. 2024</span>
         </div>
-        <p class="hero__caption">
-          A hospitality linen house for the bedrooms you let &mdash; and the one you keep for yourself.
+        <p data-cms="home.hero.caption" class="hero__caption">
+          A hospitality linen house for the bedrooms you let &middot; and the one you keep for yourself.
         </p>
       </div>
     </div>
   </section>
 
-  <section class="container statement">
+  <section data-cms-order="home.statement" data-cms-if="home.statement.visible" class="container statement">
     <div class="statement__grid">
-      <p class="eyebrow">The Brand · 002</p>
+      <p data-cms="home.statement.eyebrow" class="eyebrow">The Brand</p>
       <div>
-        <h2 class="serif">
-          Hotel-grade linen &mdash; mattresses, sheeting and robes &mdash; once kept
+        <h2 data-cms="home.statement.heading" class="serif">
+          Hotel-grade linen &middot; mattresses, sheeting and robes &middot; once kept
           for hospitality, now made for the room you sleep in.
         </h2>
-        <p>
+        <p data-cms="home.statement.body">
           We supply short-stay hosts, lodges and homes that prefer their linen done properly.
           Every product is chosen to be washed often, looked after lightly, and felt every night.
         </p>
@@ -120,19 +117,19 @@
     </div>
   </div>
 
-  <section class="container triptych">
+  <section data-cms-order="home.triptych" data-cms-if="home.triptych.visible" class="container triptych">
     <div class="triptych__head">
-      <p class="eyebrow">The Collection · 003</p>
-      <a class="ulink" href="shop.html">View All Products →</a>
+      <p data-cms="home.triptych.eyebrow" class="eyebrow">The Collection</p>
+      <a data-cms-link="home.triptych.viewall" class="ulink" href="shop.html">View All Products →</a>
     </div>
 
-    <h3 class="serif">Three rooms.<br><em>One standard.</em></h3>
+    <h3 data-cms="home.triptych.heading" class="serif">Three rooms.<br><em>One standard.</em></h3>
 
-    <div class="cards">
+    <div data-cms-list="home.triptych.cards" class="cards">
       <article class="card">
         <a href="categories/bed-linen.html">
-          <div class="ph r-4-5 has-img"><img src="assets/img/02-bed.jpg" alt="A made bed in a cottage bedroom, layered white sheeting under a natural linen throw" width="678" height="848" loading="lazy" decoding="async"></div>
-          <div class="card__meta"><span>01</span><span>Beds · Bedding · Bed Linen</span></div>
+          <div class="ph r-2-3 has-img"><img src="assets/img/02-bed.jpg" alt="A made bed in a cottage bedroom, layered white sheeting under a natural linen throw" width="678" height="848" loading="lazy" decoding="async"></div>
+          <div class="card__meta"><span>Beds · Bedding · Bed Linen</span></div>
           <h4 class="serif">The Bed</h4>
           <p>Hospitality-grade bed sets and the layers that go on top of them.</p>
           <span class="ulink">Shop the Range →</span>
@@ -141,8 +138,8 @@
 
       <article class="card">
         <a href="categories/towels-bathrobes.html">
-          <div class="ph r-4-5 has-img"><img src="assets/img/03-bath.jpg" alt="A folded stack of white and charcoal towels beside a waffle-weave robe on a brass hook" width="922" height="1152" loading="lazy" decoding="async"></div>
-          <div class="card__meta"><span>02</span><span>Towels · Bathrobes</span></div>
+          <div class="ph r-2-3 has-img"><img src="assets/img/03-bath.jpg" alt="A folded stack of white and charcoal towels beside a waffle-weave robe on a brass hook" width="922" height="1152" loading="lazy" decoding="async"></div>
+          <div class="card__meta"><span>Towels · Bathrobes</span></div>
           <h4 class="serif">The Bath</h4>
           <p>Monarch white and a quiet Cardiff palette, for homes that don't want all-white.</p>
           <span class="ulink">Shop the Range →</span>
@@ -151,8 +148,8 @@
 
       <article class="card">
         <a href="categories/room-accessories.html">
-          <div class="ph r-4-5 has-img"><img src="assets/img/04-room.jpg" alt="A wooden luggage rack with a folded throw laid across it, against a plastered wall" width="922" height="1152" loading="lazy" decoding="async"></div>
-          <div class="card__meta"><span>03</span><span>Room Accessories</span></div>
+          <div class="ph r-2-3 has-img"><img src="assets/img/04-room.jpg" alt="A wooden luggage rack with a folded throw laid across it, against a plastered wall" width="922" height="1152" loading="lazy" decoding="async"></div>
+          <div class="card__meta"><span>Room Accessories</span></div>
           <h4 class="serif">The Room</h4>
           <p>The small objects that tell a guest the host has thought of everything.</p>
           <span class="ulink">Shop the Range →</span>
@@ -161,44 +158,45 @@
     </div>
   </section>
 
-  <section class="featured">
+  <section data-cms-order="home.featured" data-cms-if="home.featured.visible" class="featured">
     <div class="container featured__grid">
       <div class="featured__media">
-        <div class="ph r-4-5 has-img"><img src="assets/img/05-midnight.jpg" alt="A euro-top mattress on a low oak base, dressed in white sheeting in a farmhouse bedroom" width="922" height="1152" loading="lazy" decoding="async"></div>
-        <span class="badge badge--flag">Flagship · 001</span>
+        
+        <div class="ph r-1-1 has-img"><img data-cms-img="home.featured.image" src="assets/img/05-midnight.jpg" alt="A euro-top mattress on a low oak base, dressed in white sheeting in a farmhouse bedroom" width="922" height="1152" loading="lazy" decoding="async"></div>
+        <span data-cms="home.featured.badge" class="badge badge--flag">Flagship</span>
       </div>
 
       <div>
-        <p class="eyebrow">The Feature · 004</p>
-        <h3 class="serif">Makers Midnight<br><em>Euro-Top.</em></h3>
-        <p>
-          An eight-zone pocket spring with a quilted hospitality top &mdash; built for
-          back-to-back guest stays, finished for the bedroom you keep for yourself.
+        <p data-cms="home.featured.eyebrow" class="eyebrow">The Feature</p>
+        <h3 data-cms="home.featured.heading" class="serif">Makers Midnight<br><em>Euro-Top.</em></h3>
+        <p data-cms="home.featured.body">
+          The comfort of a beautiful hotel bed, brought home &middot; thoughtfully made for
+          deep, restful sleep and the bedroom you love coming home to.
         </p>
 
         <dl class="specs">
-          <div class="spec"><dt>Pocket Springs</dt><dd>2 000</dd></div>
-          <div class="spec"><dt>Top Layer</dt><dd>Euro Quilt</dd></div>
-          <div class="spec"><dt>Warranty</dt><dd>10 Years</dd></div>
-          <div class="spec"><dt>From</dt><dd>$1,290 NZD</dd></div>
+          <div class="spec"><dt>Deep luxurious comfort</dt><dd>300 mm profile</dd></div>
+          <div class="spec"><dt>Support that moves with you</dt><dd>Individually wrapped pocket springs</dd></div>
+          <div class="spec"><dt>Cooler, comfortable sleep</dt><dd>Gel memory foam</dd></div>
+          <div class="spec"><dt>Built to last</dt><dd>10-year warranty</dd></div>
         </dl>
 
         <div class="featured__cta">
-          <a class="btn" href="products/makers-midnight-euro-top-mattress.html">Add to Nest +</a>
-          <a class="btn btn--ghost" href="products/makers-midnight-euro-top-mattress.html">Product Specs →</a>
+          <a data-cms-link="home.featured.cta_primary" class="btn" href="products/makers-midnight-euro-top-mattress.html">Add to Nest +</a>
+          <a data-cms-link="home.featured.cta_secondary" class="btn btn--ghost" href="products/makers-midnight-euro-top-mattress.html">Product Specs →</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="anchor">
+  <section data-cms-order="home.anchor" data-cms-if="home.anchor.visible" class="anchor">
     <div class="container anchor__grid">
       <div>
-        <p class="eyebrow on-ink">Comfort &amp; Durability · 005</p>
-        <h3 class="serif">Take Your<br>Comfort<br><em>Home.</em></h3>
+        <p data-cms="home.anchor.eyebrow" class="eyebrow on-ink">Comfort &amp; Durability</p>
+        <h3 data-cms="home.anchor.heading" class="serif">Take Your<br>Comfort<br><em>Home.</em></h3>
       </div>
       <div>
-        <p>
+        <p data-cms="home.anchor.body">
           Every product in the collection is chosen for two qualities and two qualities only:
           how it feels the first night, and how it feels two hundred washes later.
         </p>
@@ -213,11 +211,11 @@
     </div>
   </section>
 
-  <section class="container words">
-    <p class="eyebrow">The Word · 006</p>
-    <h3 class="serif">Shared by the families who love it.</h3>
+  <section data-cms-order="home.words" data-cms-if="home.words.visible" class="container words">
+    <p data-cms="home.words.eyebrow" class="eyebrow">The Word</p>
+    <h3 data-cms="home.words.heading" class="serif">Shared by the families who love it.</h3>
 
-    <div class="quotes">
+    <div data-cms-list="home.words.items" class="quotes">
       <figure class="quote">
         <div class="quote__mark serif" aria-hidden="true">&ldquo;</div>
         <blockquote>
@@ -239,45 +237,28 @@
       <figure class="quote">
         <div class="quote__mark serif" aria-hidden="true">&ldquo;</div>
         <blockquote>
-          Sales answered on a Sunday, delivery the next Wednesday. Linen turned up
-          folded like it was for a five-star.
+          Sales answered late on a Friday. Delivery the next Wednesday. Linen turned up
+          folded like it was for a 5 Star Hotel.
         </blockquote>
-        <figcaption><b>Marcus L.</b><span>Property Manager · Queenstown</span></figcaption>
+        <figcaption><b>Marcus L.</b><span>Queenstown</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="container strip">
-    <div class="strip__grid">
+  <section data-cms-order="home.strip" data-cms-if="home.strip.visible" class="container strip">
+    <div data-cms-list="home.strip.images" class="strip__grid">
       <div class="ph r-3-4 has-img"><img src="assets/img/06-linen.jpg" alt="Close detail of washed linen weave and a turned-back sheet edge" width="426" height="568" loading="lazy" decoding="async"></div>
-      <div class="ph r-3-4 has-img"><img src="assets/img/07-bedroom.jpg" alt="A neutral bedroom corner — timber floor, plastered wall, made bed" width="636" height="848" loading="lazy" decoding="async"></div>
+      <div class="ph r-3-4 has-img"><img src="assets/img/07-bedroom.jpg" alt="A neutral bedroom corner · timber floor, plastered wall, made bed" width="636" height="848" loading="lazy" decoding="async"></div>
       <div class="ph r-3-4 has-img"><img src="assets/img/08-towel.jpg" alt="A folded stack of towelling, edges squared" width="536" height="714" loading="lazy" decoding="async"></div>
       <div class="ph r-3-4 has-img"><img src="assets/img/09-robe.jpg" alt="A waffle-weave cotton robe hanging from a brass hook" width="418" height="557" loading="lazy" decoding="async"></div>
     </div>
   </section>
 
-  <section class="trade">
-    <div class="container trade__inner">
-      <div>
-        <p class="eyebrow">Trade &amp; Property · 007</p>
-        <h3 class="serif">Fitting out more<br><em>than one room?</em></h3>
-        <p>
-          Most of what leaves here goes to people who run rooms for a living. If you're
-          outfitting a property, or replacing a whole floor of it, send us the room count
-          and we'll quote it properly.
-        </p>
-      </div>
-      <div class="trade__cta">
-        <a class="btn" href="contact.html">Request a Quote →</a>
-        <span class="note">Mon — Fri · 9am to 5pm NZST · sales@thelittlenest.co.nz</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="closer">
+  
+  <section data-cms-order="home.closer" data-cms-if="home.closer.visible" class="closer">
     <div class="container closer__inner">
-      <h3 class="serif">Ready to outfit the room?</h3>
-      <a class="btn" href="shop.html">Shop the Range →</a>
+      <h3 data-cms="home.closer.heading" class="serif">Ready to outfit the room?</h3>
+      <a data-cms-link="home.closer.cta" class="btn" href="shop.html">Shop the Range →</a>
     </div>
   </section>
 </main>
@@ -286,13 +267,10 @@
   <div class="container">
     <div class="footer__grid">
       <div>
-        <span class="wordmark-text wordmark-text--lg">
-          <b>The Little Nest</b>
-          <i>Take Your Comfort Home.</i>
-        </span>
-        <p class="footer__blurb">
-          Hospitality bedding, towelling and accessories, supplied from Aotearoa to
-          short-stay hosts, lodges and homes that prefer their linen done properly.
+        <img class="wordmark wordmark--foot" src="assets/img/logo-lockup.png" alt="The Little Nest · Take Your Comfort Home" width="912" height="385" loading="lazy" decoding="async">
+        <p data-cms="global.footer.blurb" class="footer__blurb">
+          Beautiful bedding, bath linen and home comforts, thoughtfully sourced in Aotearoa
+          for those who believe the everyday deserves to feel a little more special.
         </p>
       </div>
 
@@ -325,10 +303,10 @@
 
       <div>
         <h2>Contact</h2>
-        <a class="footer__email" href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
+        <a data-cms="global.footer.email" class="footer__email" href="mailto:sales@thelittlenest.co.nz">sales@thelittlenest.co.nz</a>
         <p class="footer__meta">thelittlenest.co.nz</p>
         
-        <p class="footer__hours">Mon — Fri · 9am to 5pm NZST</p>
+        <p data-cms="global.footer.hours" class="footer__hours">Mon to Fri · 9am to 5pm NZST</p>
       </div>
     </div>
 
@@ -336,11 +314,12 @@
 
     <div class="footer__base">
       <span>© <span data-year>2026</span> The Little Nest. Aotearoa New Zealand.</span>
-      <span>Take Your Comfort Home</span>
+      <span data-cms="global.footer.tagline">Take Your Comfort Home</span>
     </div>
   </div>
 </footer>
 
-<script src="assets/tln.js"></script>
+<script src="assets/tln.js?v=afb8c600"></script>
+<script src="assets/js/analytics.js"></script>
 </body>
 </html>

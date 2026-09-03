@@ -1,0 +1,658 @@
+{
+  "_meta": {
+    "purpose": "The single registry of every CMS-managed content key. Consumed by three things: cms/stamp-content.py (adds data-cms attributes to the HTML and extracts today's values as defaults), the Worker (decides what to inject), and build/admin/admin.js (renders the editors and groups them).",
+    "rule": "A key is a STABLE IDENTIFIER, never a CSS selector. Renaming a class must not detach the CMS, and a CMS edit must never be able to alter the design.",
+    "kinds": {
+      "text": "plain string, HTML-escaped on injection",
+      "richtext": "limited inline HTML: br, em, strong, a. Sanitised on save AND on injection.",
+      "link": "{ label, href }",
+      "image": "{ media_id | src, alt }",
+      "list": "array of objects, ordered, each with a visible flag",
+      "flag": "boolean, drives section visibility",
+      "number": "integer, drives section order"
+    },
+    "anchor": "Each entry names the file and a unique anchor string used to locate the element for stamping. The stamper fails loudly if an anchor is not found exactly once."
+  },
+  "groups": [
+    {
+      "id": "global",
+      "title": "Site-wide",
+      "blurb": "Appears on all 186 pages. A change here is the widest-reaching edit in the system.",
+      "icon": "globe",
+      "sections": [
+        {
+          "id": "global.announce",
+          "title": "Announcement bar",
+          "blurb": "The strip above the header. The safest and most useful thing to change.",
+          "fields": [
+            {
+              "key": "global.announce.text",
+              "label": "Message",
+              "kind": "richtext",
+              "help": "Three short facts separated by a middle dot reads best. Keep it factual.",
+              "file": "*",
+              "anchor": "<div class=\"announce\">\n  <p>",
+              "close": "</p>"
+            },
+            {
+              "key": "global.announce.visible",
+              "label": "Show the announcement bar",
+              "kind": "flag",
+              "default": true,
+              "file": "*",
+              "target": "div.announce"
+            }
+          ]
+        },
+        {
+          "id": "global.footer",
+          "title": "Footer",
+          "fields": [
+            {
+              "key": "global.footer.blurb",
+              "label": "Footer paragraph",
+              "kind": "richtext",
+              "file": "*",
+              "anchor": "<p class=\"footer__blurb\">",
+              "close": "</p>"
+            },
+            {
+              "key": "global.footer.email",
+              "label": "Contact email",
+              "kind": "text",
+              "file": "*",
+              "anchor": "<a class=\"footer__email\"",
+              "attr": "text"
+            },
+            {
+              "key": "global.footer.hours",
+              "label": "Opening hours",
+              "kind": "text",
+              "file": "*",
+              "anchor": "<p class=\"footer__hours\">",
+              "close": "</p>"
+            },
+            {
+              "key": "global.footer.tagline",
+              "label": "Base tagline",
+              "kind": "text",
+              "file": "*",
+              "anchor": "<span>Take Your Comfort Home</span>",
+              "close": "</span>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "home",
+      "title": "Homepage",
+      "blurb": "Nine sections. Each can be hidden and reordered.",
+      "icon": "home",
+      "file": "index.html",
+      "sections": [
+        {
+          "id": "home.hero",
+          "title": "001 · Hero",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.hero.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text",
+              "anchor": "<p class=\"eyebrow\">Aotearoa New&nbsp;Zealand · 001</p>"
+            },
+            {
+              "key": "home.hero.title",
+              "label": "Headline",
+              "kind": "richtext",
+              "help": "Line breaks are meaningful. <em> sets a word in italic serif.",
+              "anchor": "<h1 class=\"serif\">Take Your<br><em>Comfort</em><br>Home.</h1>"
+            },
+            {
+              "key": "home.hero.cta_primary",
+              "label": "Primary button",
+              "kind": "link",
+              "anchor": "<a class=\"btn\" href=\"shop.html\">Shop the Range →</a>"
+            },
+            {
+              "key": "home.hero.cta_secondary",
+              "label": "Secondary button",
+              "kind": "link",
+              "anchor": "<a class=\"btn btn--ghost\" href=\"about.html\">Our Standard</a>"
+            },
+            {
+              "key": "home.hero.image",
+              "label": "Hero image",
+              "kind": "image",
+              "anchor": "assets/img/01-hero.jpg"
+            },
+            {
+              "key": "home.hero.badge",
+              "label": "Badge",
+              "kind": "text",
+              "anchor": "<span class=\"badge badge--hero\">Est. 2024</span>"
+            },
+            {
+              "key": "home.hero.caption",
+              "label": "Caption under the image",
+              "kind": "richtext",
+              "anchor": "<p class=\"hero__caption\">",
+              "close": "</p>"
+            }
+          ]
+        },
+        {
+          "id": "home.statement",
+          "title": "002 · Brand statement",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.statement.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "home.statement.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.statement.body",
+              "label": "Paragraph",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "home.triptych",
+          "title": "003 · Three cards",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.triptych.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "home.triptych.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.triptych.viewall",
+              "label": "“View all” link",
+              "kind": "link"
+            },
+            {
+              "key": "home.triptych.cards",
+              "label": "Cards",
+              "kind": "list",
+              "item": [
+                {
+                  "name": "title",
+                  "label": "Card title",
+                  "kind": "richtext"
+                },
+                {
+                  "name": "caption",
+                  "label": "Caption",
+                  "kind": "richtext"
+                },
+                {
+                  "name": "meta",
+                  "label": "Small print above the title",
+                  "kind": "text"
+                },
+                {
+                  "name": "image",
+                  "label": "Image",
+                  "kind": "image"
+                },
+                {
+                  "name": "href",
+                  "label": "Links to",
+                  "kind": "text"
+                },
+                {
+                  "name": "cta",
+                  "label": "Link text",
+                  "kind": "text"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "home.featured",
+          "title": "004 · Featured product",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.featured.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "home.featured.badge",
+              "label": "Corner badge",
+              "kind": "text",
+              "help": "The small flag over the image, currently “Flagship · 001”."
+            },
+            {
+              "key": "home.featured.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.featured.body",
+              "label": "Paragraph",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.featured.cta_primary",
+              "label": "Primary button",
+              "kind": "link"
+            },
+            {
+              "key": "home.featured.cta_secondary",
+              "label": "Secondary button",
+              "kind": "link"
+            },
+            {
+              "key": "home.featured.image",
+              "label": "Image",
+              "kind": "image",
+              "anchor": "assets/img/05-midnight.jpg"
+            }
+          ]
+        },
+        {
+          "id": "home.anchor",
+          "title": "005 · Anchor statement",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.anchor.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "home.anchor.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.anchor.body",
+              "label": "Paragraph",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "home.words",
+          "title": "006 · Testimonials",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.words.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "home.words.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.words.items",
+              "label": "Testimonials",
+              "kind": "list",
+              "item": [
+                {
+                  "name": "quote",
+                  "label": "Quote",
+                  "kind": "richtext"
+                },
+                {
+                  "name": "name",
+                  "label": "Name",
+                  "kind": "text"
+                },
+                {
+                  "name": "location",
+                  "label": "Role and location",
+                  "kind": "text"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "home.strip",
+          "title": "007 · Image strip",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.strip.images",
+              "label": "Images",
+              "kind": "list",
+              "item": [
+                {
+                  "name": "image",
+                  "label": "Image",
+                  "kind": "image"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "home.trade",
+          "title": "008 · Trade and property",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.trade.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "home.trade.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.trade.body",
+              "label": "Paragraph",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.trade.cta",
+              "label": "Button",
+              "kind": "link"
+            },
+            {
+              "key": "home.trade.note",
+              "label": "Note under the button",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "home.closer",
+          "title": "009 · Closing call to action",
+          "orderable": true,
+          "fields": [
+            {
+              "key": "home.closer.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "home.closer.cta",
+              "label": "Button",
+              "kind": "link"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "title": "About page",
+      "icon": "page",
+      "file": "about.html",
+      "sections": [
+        {
+          "id": "about.masthead",
+          "title": "001 · Masthead",
+          "fields": [
+            {
+              "key": "about.masthead.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "about.masthead.title",
+              "label": "Page title",
+              "kind": "richtext"
+            },
+            {
+              "key": "about.masthead.lede",
+              "label": "Lede",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "about.split",
+          "title": "002 · Who we are",
+          "fields": [
+            {
+              "key": "about.split.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "about.split.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "about.split.body1",
+              "label": "First paragraph",
+              "kind": "richtext"
+            },
+            {
+              "key": "about.split.body2",
+              "label": "Second paragraph",
+              "kind": "richtext"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sustainability",
+      "title": "Sustainability page",
+      "icon": "page",
+      "file": "sustainability.html",
+      "sections": [
+        {
+          "id": "sus.masthead",
+          "title": "001 · Masthead",
+          "fields": [
+            {
+              "key": "sus.masthead.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "sus.masthead.title",
+              "label": "Page title",
+              "kind": "richtext"
+            },
+            {
+              "key": "sus.masthead.lede",
+              "label": "Lede",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "sus.story",
+          "title": "002 · The story",
+          "fields": [
+            {
+              "key": "sus.story.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "sus.story.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "sus.story.body1",
+              "label": "First paragraph",
+              "kind": "richtext"
+            },
+            {
+              "key": "sus.story.body2",
+              "label": "Second paragraph",
+              "kind": "richtext"
+            },
+            {
+              "key": "sus.story.body3",
+              "label": "Third paragraph",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "sus.anchor",
+          "title": "003 · Anchor",
+          "fields": [
+            {
+              "key": "sus.anchor.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "sus.anchor.heading",
+              "label": "Heading",
+              "kind": "richtext"
+            },
+            {
+              "key": "sus.anchor.body",
+              "label": "Paragraph",
+              "kind": "richtext"
+            },
+            {
+              "key": "sus.anchor.cta",
+              "label": "Button",
+              "kind": "link"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "title": "Contact page",
+      "icon": "page",
+      "file": "contact.html",
+      "sections": [
+        {
+          "id": "contact.masthead",
+          "title": "001 · Masthead",
+          "fields": [
+            {
+              "key": "contact.masthead.eyebrow",
+              "label": "Eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "contact.masthead.title",
+              "label": "Page title",
+              "kind": "richtext"
+            },
+            {
+              "key": "contact.masthead.lede",
+              "label": "Lede",
+              "kind": "richtext"
+            }
+          ]
+        },
+        {
+          "id": "contact.body",
+          "title": "002 · Details and form",
+          "fields": [
+            {
+              "key": "contact.body.eyebrow_details",
+              "label": "Details eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "contact.body.eyebrow_form",
+              "label": "Form eyebrow",
+              "kind": "text"
+            },
+            {
+              "key": "contact.body.fallback",
+              "label": "Paragraph below the form",
+              "kind": "richtext"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "categories",
+      "title": "Shop categories",
+      "blurb": "The 8 category tiles on /shop and the header of each category page. Names, blurbs and images only. Which products sit in a category is owned by the price list and Zoho, not by the CMS.",
+      "icon": "grid",
+      "sections": [
+        {
+          "id": "cat.list",
+          "title": "Categories",
+          "fields": [
+            {
+              "key": "categories.items",
+              "label": "Categories",
+              "kind": "list",
+              "locked_length": true,
+              "item": [
+                {
+                  "name": "slug",
+                  "label": "Slug",
+                  "kind": "text",
+                  "readonly": true
+                },
+                {
+                  "name": "name",
+                  "label": "Name",
+                  "kind": "text"
+                },
+                {
+                  "name": "blurb",
+                  "label": "Blurb",
+                  "kind": "richtext"
+                },
+                {
+                  "name": "image",
+                  "label": "Tile image",
+                  "kind": "image"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "not_editable": [
+    {
+      "what": "Policies page (shipping, returns, privacy, terms)",
+      "why": "The freight bands on this page are legally load-bearing. A previous mismatch between this page and what Zoho charged at checkout is recorded in the project as a Fair Trading Act exposure. This text must only ever change alongside the Zoho freight configuration, never independently through a content form."
+    },
+    {
+      "what": "Navigation structure and page slugs",
+      "why": "186 pages carry relative links and a sitemap built from them. A rename is a redirect decision, not a text edit. build-shop-pages.py already has a REDIRECTS mechanism for that."
+    },
+    {
+      "what": "Product titles, SKUs, prices and variants",
+      "why": "Owned by the price list and Zoho. A third editable copy would make the reconciliation problem recorded in PRODUCT-DATA-AUDIT-2026-08-13.md strictly worse."
+    },
+    {
+      "what": "Meta titles and descriptions on product pages",
+      "why": "Derived from product data. Should stay derived so they cannot drift from the product."
+    },
+    {
+      "what": "Contact form endpoint and checkout flow",
+      "why": "Functionality, not content."
+    }
+  ]
+}
