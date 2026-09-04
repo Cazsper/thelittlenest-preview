@@ -254,11 +254,9 @@ const Cart = {
 
    RAISED 3 Sep 2026 on Steph Fisher's instruction: the two middle tiers went
    17.90 -> 18.90 and 27.90 -> 28.90. Under $30 and free-over-$350 unchanged.
-   ⚠ The Zoho zones have NOT been re-read since. These numbers, the table in
-   policies.html and the zoho* functions in test-freight-bands.mjs are all a
-   DECLARATION of the intended rates. Until Zoho's two Domestic rows and its
-   two matching Rural rows are changed, the cart quotes $1.00 more than
-   checkout charges. See the comment above the table in policies.html. */
+   APPLIED IN ZOHO 4 Sep 2026 and read back off the saved Shipping Zones screen,
+   along with the two matching Rural rows (26.90 -> 27.90, 36.90 -> 37.90), which
+   had to move because policies.html promises rural is +$9.00 on every tier. */
 function freight(subtotal, rural = false) {
   if (subtotal <= 0) return 0;
   const base = subtotal >= 350 ? 0

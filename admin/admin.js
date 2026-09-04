@@ -1012,7 +1012,7 @@ async function renderUsers() {
         <div class="grid2">
           <div class="field"><label for="up">Password</label>
             <input type="text" id="up" spellcheck="false">
-            <p class="hint">At least 12 characters. Give it to them directly and
+            <p class="hint">At least 8 characters. Give it to them directly and
               ask them to change it under My account.</p></div>
           <div class="field"><label for="ur">Role</label>
             <select id="ur"><option value="editor">Editor</option>
@@ -1067,7 +1067,7 @@ function renderAccount() {
           <input type="password" id="pc" autocomplete="current-password"></div>
         <div class="field"><label for="pn">New password</label>
           <input type="password" id="pn" autocomplete="new-password">
-          <p class="hint">At least 12 characters. A short sentence works well and
+          <p class="hint">At least 8 characters. A short sentence works well and
             is easier to type than something with symbols in it.</p></div>
         <button class="btn" type="button" id="pgo">Change password</button>
         <p class="hint">You will be signed out on every device afterwards.</p>
@@ -1164,14 +1164,45 @@ async function syncPricesFromZoho(btn) {
       method: 'POST', body: { rows, expected: count },
     });
 
-    say(done.written
-      ? `${done.count} price${done.count === 1 ? '' : 's'} brought across from `
-        + 'Zoho. The website updates within about a minute.'
-        + (done.skipped
-            ? ` ${done.skipped} size${done.skipped === 1 ? ' has' : 's have'} no `
-              + 'price in Zoho yet and was left as it is.'
-            : '')
-      : 'Zoho has no prices to bring across, so the website is unchanged.');
+    /* THE WARNING IS THE POINT OF THIS BLOCK, added 4 Sep 2026.
+       Steph priced the Comfort-Top King Split in Zoho, pressed this button, was
+       told "393 prices brought across from Zoho", and her price did not appear.
+       It had been skipped on purpose, because the website shows that line as
+       "Price on application" and the sync will not take a product off that
+       without a person deciding to. That decision is right; reporting it only
+       in a toast that vanishes was not. She had no way to tell the difference
+       between "skipped deliberately" and "broken", and spent an afternoon
+       assuming broken.
+       So it goes in the STATUS LINE, which persists, and it NAMES the products
+       rather than listing SKUs nobody can decode. */
+    const bits = [];
+    if (done.written) {
+      bits.push(`${done.count} price${done.count === 1 ? '' : 's'} brought `
+        + 'across from Zoho. The website updates within about a minute.');
+    } else {
+      bits.push('Zoho has no prices to bring across, so the website is unchanged.');
+    }
+    if (done.skipped) {
+      bits.push(`${done.skipped} size${done.skipped === 1 ? ' has' : 's have'} no `
+        + 'price in Zoho yet, so nothing was changed for those.');
+    }
+    const held = Array.isArray(done.offered_skus) ? done.offered_skus : [];
+    if (held.length) {
+      /* Formatted inline, NOT with money(): that helper is local to
+         renderProducts and takes a product, not a number, so calling it here
+         would throw a ReferenceError at exactly the moment this warning is
+         supposed to appear. */
+      const nz = (n) => (typeof n === 'number' && isFinite(n))
+        ? `NZ$${n.toFixed(2)}` : null;
+      const names = held.map((o) => `${o.name || o.sku}`
+        + (nz(o.price) ? ` (${nz(o.price)})` : ''));
+      bits.push(`NOT BROUGHT ACROSS: ${held.length} `
+        + `${held.length === 1 ? 'size is' : 'sizes are'} priced in Zoho but the `
+        + 'website still shows them as "Price on application", so their prices '
+        + 'were left alone. Putting one on sale is a price list decision, not a '
+        + `sync. ${names.join('; ')}.`);
+    }
+    say(bits.join(' '));
     toast(done.message || 'Prices synced');
   } catch (ex) {
     say('');
