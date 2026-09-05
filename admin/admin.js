@@ -416,6 +416,8 @@ function imageControl(label, initial, write) {
           <button class="btn btn--ghost btn--sm" type="button" data-upload>Upload…</button>
           <button class="btn btn--ghost btn--sm" type="button" data-library>Choose from library</button>
         </div>
+        <p class="img__hint">or drag an image straight onto the square from
+          Finder</p>
         <label class="hint" data-altlabel>Alt text · what the image shows, for
           screen readers and search</label>
         <input type="text" data-alt>
@@ -454,9 +456,71 @@ function imageControl(label, initial, write) {
   $('[data-library]', wrap).addEventListener('click',
     async () => take(await pickFromLibrary()));
 
+  /* DRAG AND DROP FROM FINDER, added 4 Sep 2026 at Cazsper's request.
+
+     It lives HERE, on the shared control, rather than on the product editor,
+     because every image slot in the CMS is an imageControl: the single
+     Photograph, every row of a product gallery, and the homepage and About
+     images too. One place to add it, one place to fix it, and no slot that
+     accepts a drop while its neighbour silently does not.
+
+     ONLY A DRAG CARRYING FILES IS TOUCHED. `types` is the documented way to
+     ask, and it is checked on dragover as well as on drop: without the
+     dragover preventDefault the browser refuses the drop outright, and
+     without the `Files` test this control would light up for any old drag
+     across the page. Reordering a gallery uses the up/down buttons rather
+     than HTML5 drag, so there is nothing here to collide with today, but the
+     test is what keeps that true if reordering ever becomes a drag. */
+  const prev = $('[data-prev]', wrap);
+  const carriesFiles = (e) => [...(e.dataTransfer?.types ?? [])].includes('Files');
+
+  ['dragenter', 'dragover'].forEach((ev) => prev.addEventListener(ev, (e) => {
+    if (!carriesFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    prev.setAttribute('data-over', '');
+  }));
+  ['dragleave', 'dragend'].forEach((ev) => prev.addEventListener(ev,
+    () => prev.removeAttribute('data-over')));
+
+  prev.addEventListener('drop', async (e) => {
+    if (!carriesFiles(e)) return;
+    e.preventDefault();
+    prev.removeAttribute('data-over');
+
+    const files = [...(e.dataTransfer?.files ?? [])];
+    /* A slot holds ONE photograph. Dropping a folder's worth on it is a
+       reasonable mistake to make, so say what happened rather than silently
+       using the first and discarding the rest. */
+    if (files.length > 1) {
+      toast(`${files.length} files dropped. This slot holds one, so `
+          + `"${files[0].name}" was used. Add the rest with "Add a `
+          + 'photograph", or drop them all into Media.', true);
+    }
+    const file = files[0];
+    if (!file) return;
+    /* media.js sniffs the magic bytes and is the real gate. This is only so a
+       dropped PDF fails instantly and by name instead of after an upload. */
+    if (!/^image\//.test(file.type)) {
+      toast(`"${file.name}" is not an image.`, true);
+      return;
+    }
+    take(await uploadFile(file));
+  });
+
   paint();
   return wrap;
 }
+
+/* A file dropped a few pixels off a slot lands on the document, and the
+   browser's default is to NAVIGATE to it: the admin unloads and any unsaved
+   edit in the draft goes with it. beforeunload above would prompt, but the
+   better answer is for a near miss to do nothing at all. Registered once, at
+   module scope, and deliberately not on the controls themselves so it covers
+   the whole page including the gaps between them. */
+['dragover', 'drop'].forEach((ev) => window.addEventListener(ev, (e) => {
+  if ([...(e.dataTransfer?.types ?? [])].includes('Files')) e.preventDefault();
+}));
 
 const fImage = (field, key) =>
   imageControl(field.label, valueOf(key) ?? { src: '', alt: '' },
