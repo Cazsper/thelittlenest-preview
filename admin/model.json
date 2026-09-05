@@ -590,6 +590,33 @@
       ]
     },
     {
+      "id": "shop",
+      "title": "Shop page",
+      "icon": "page",
+      "file": "shop.html",
+      "blurb": "The masthead at the top of /shop, above the category tiles.",
+      "sections": [
+        {
+          "id": "shop.head",
+          "title": "001 · Masthead",
+          "fields": [
+            {
+              "key": "shop.head.title",
+              "label": "Page title",
+              "kind": "text",
+              "help": "The big heading at the top of the shop. Currently “The Range”."
+            },
+            {
+              "key": "shop.head.lede",
+              "label": "Lede",
+              "kind": "richtext",
+              "help": "The sentence under the heading. Leave this box EMPTY to keep the wording the site was built with; type here to override it."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "categories",
       "title": "Shop categories",
       "blurb": "The 8 category tiles on /shop and the header of each category page. Names, blurbs and images only. Which products sit in a category is owned by the price list and Zoho, not by the CMS.",
