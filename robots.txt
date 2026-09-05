@@ -1,5 +1,2 @@
 User-agent: *
-Allow: /
-Disallow: /admin
-
-Sitemap: https://thelittlenest.co.nz/sitemap.xml
+Disallow: /
