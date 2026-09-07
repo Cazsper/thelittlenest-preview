@@ -83,7 +83,7 @@ const Catalogue = {
    cms/products.js when somebody has published an order through /admin.
 
        featured   the curated order. Ships as the whole range in price-list
-                  order, which is what Cazsper asked for on 17 Aug 2026.
+                  order, which is the agreed default.
        order      the running order of everything, used for whatever is not
                   featured, and for the "Featured" sort inside a category.
 
@@ -474,7 +474,7 @@ function imgMarkup(img, prefix, sizes, eager) {
    context class (shop-tile__ph / shop-line__ph) so callers stay one-liners. */
 function phBlock(p, prefix, sizes, extra, cap) {
   const inner = imgMarkup(p && p.img, prefix, sizes, false);
-  /* r-1-1: PRODUCT ratio, Patrick 17 Aug 2026. MIRRORS ph_block() in
+  /* r-1-1: PRODUCT ratio, agreed 17 Aug 2026. MIRRORS ph_block() in
      build-shop-pages.py. If these two disagree a tile changes shape the moment
      the customer types in the search box, because that is when this renderer
      takes over from the built markup. */
