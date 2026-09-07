@@ -535,9 +535,27 @@ function hydrateTools(tools) {
 
   const paint = () => {
     const term = (q?.value || '').trim().toLowerCase();
-    let list = scope === 'all'
-      ? Catalogue.all().slice()
-      : Catalogue.inCat(Catalogue.cat(scope).name).slice();
+    /* SCOPE TAKES A LIST, added 7 Sep 2026. It was one slug or the literal
+       'all', which meant a page could only ever show one category. The
+       homepage's "The Bed" card promises "Beds · Bedding · Bed Linen" and
+       delivered Bed Linen alone, because there was no way to express the other
+       two. A comma-separated list fixes that without a new page type.
+
+       An unknown slug is DROPPED rather than crashing the grid: Catalogue.cat
+       returns undefined for a typo, and reading .name off it used to throw and
+       leave the page with a permanently empty grid and no error a customer
+       could act on. Names, not slugs, because that is what `p.cat` holds. */
+    let list;
+    if (scope === 'all') {
+      list = Catalogue.all().slice();
+    } else {
+      const names = scope.split(',')
+        .map(sl => Catalogue.cat(sl.trim()))
+        .filter(Boolean)
+        .map(c => c.name);
+      const want = new Set(names);
+      list = Catalogue.all().filter(p => want.has(p.cat));
+    }
 
     if (term) list = list.filter(p =>
       p.name.toLowerCase().includes(term) ||
