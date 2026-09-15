@@ -1195,6 +1195,87 @@ function renderAccount() {
    Same partial-harvest refusal, and for a sharper reason: the bundle REPLACES
    the key, so a short harvest would drop prices back to whatever the built
    catalogue says. A missing description is visible. A stale price is not. */
+/* --- new products in Zoho --------------------------------------------------
+   Added 15 Sep 2026. Read-only: it discovers Zoho products the website does not
+   carry and reports whether each is ready, running the same five gates a person
+   would run by hand.
+
+   ⚠ THE STATUS LINE IS THE FEATURE, not the button. On 4 Sep Steph priced a
+   product, was told "393 prices brought across from Zoho", her price did not
+   appear because it had been skipped deliberately, and she spent an afternoon
+   assuming the site was broken. A toast that vanishes is not a report. So every
+   outcome here lands in text that stays on screen, and a blocked product NAMES
+   what to fix in Zoho rather than saying "not ready".
+
+   And it never claims a product is live. It cannot be: a product page is a
+   static file, so a publish is always still required. */
+async function checkNewProducts(btn) {
+  const status = $('#nstatus');
+  const list = $('#nlist');
+  const say = (msg) => { if (status) status.textContent = msg; };
+
+  busy(btn, true);
+  say('Asking Zoho what products it has, and checking each one…');
+  if (list) list.innerHTML = '';
+
+  try {
+    const r = await call('/api/admin/zoho/new-products');
+    const found = r.products || [];
+
+    if (!found.length) {
+      say(`Checked ${r.checked} products in Zoho. Everything in Zoho is already `
+        + 'on the website · there is nothing new to bring over.');
+      return;
+    }
+
+    const ready = found.filter((p) => p.ready);
+    const blocked = found.filter((p) => !p.ready);
+
+    list.innerHTML = found.map((p) => {
+      const money = p.price == null ? 'no price'
+        : 'NZ$' + Number(p.price).toLocaleString('en-NZ',
+            { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const head = `<b>${esc(p.name || '(no name)')}</b>`
+        + ` <span class="hint">${esc(p.sku || 'no SKU')} · ${esc(money)}`
+        + `${p.category ? ' · ' + esc(p.category) : ''}</span>`;
+      if (p.ready) {
+        return `<div class="card" style="margin-top:12px">
+          <div class="card__body">
+            <p>✓ ${head}</p>
+            <p class="hint">Ready to bring over. It has been checked all the way
+              through to Zoho's checkout, so it can actually be bought.</p>
+            <p class="hint"><b>It is not on the website yet.</b> Cazsper needs to
+              publish the site before it appears.</p>
+          </div></div>`;
+      }
+      return `<div class="card" style="margin-top:12px">
+        <div class="card__body">
+          <p>✗ ${head}</p>
+          <p class="hint">Not ready yet. Fix this in Zoho, then press the button
+            again:</p>
+          <ul class="hint">${p.blockers.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>
+        </div></div>`;
+    }).join('');
+
+    const bits = [`Checked ${r.checked} products in Zoho.`];
+    if (ready.length) {
+      bits.push(`${ready.length} ready to bring over `
+        + `(${ready.map((p) => p.name).join(', ')}). `
+        + 'These are NOT on the website yet · Cazsper publishes the site to make '
+        + 'them appear.');
+    }
+    if (blocked.length) {
+      bits.push(`${blocked.length} not ready yet; what to fix is listed below.`);
+    }
+    say(bits.join(' '));
+  } catch (e) {
+    say('');
+    toast(e?.message || 'Could not check Zoho. Nothing was changed.', true);
+  } finally {
+    busy(btn, false);
+  }
+}
+
 async function syncPricesFromZoho(btn) {
   const status = $('#pstatus');
   const say = (msg) => { if (status) status.textContent = msg; };
@@ -1401,6 +1482,24 @@ async function renderProducts() {
     </section>
 
     <section class="card">
+      <div class="card__head">
+        <h2>New products in Zoho</h2>
+      </div>
+      <div class="card__body">
+        <p class="hint">When you create a product in Zoho, press this to check it
+          is set up correctly and ready for the website.</p>
+        <p class="hint"><b>This does not put it on the website.</b> It checks the
+          product and tells you whether anything still needs fixing in Zoho.
+          Cazsper publishes the site to make it appear.</p>
+        <p>
+          <button class="btn" type="button" id="nsync">Check for new products</button>
+        </p>
+        <p class="hint" id="nstatus" role="status" aria-live="polite"></p>
+        <div id="nlist"></div>
+      </div>
+    </section>
+
+    <section class="card">
       <div class="card__body">
         <div class="field">
           <label for="psearch">Find a product</label>
@@ -1413,6 +1512,7 @@ async function renderProducts() {
 
   $('#zsync', view).addEventListener('click', (e) => syncFromZoho(e.currentTarget));
   $('#psync', view).addEventListener('click', (e) => syncPricesFromZoho(e.currentTarget));
+  $('#nsync', view).addEventListener('click', (e) => checkNewProducts(e.currentTarget));
 
   const list = $('#plist', view);
   const search = $('#psearch', view);
