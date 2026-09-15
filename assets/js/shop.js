@@ -73,25 +73,27 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g,
       an extra chance to hit. Conservative on purpose: -ies/-es/-s, minimum
       lengths, no stemmer. Over-stemming ("slip" -> "sli") would start
       matching things a customer did not ask for, which is a worse failure
-      than the one being fixed because it is invisible. */
-const stems = tok => {
-  const out = [tok];
-  if (tok.length > 4 && tok.endsWith('ies')) out.push(tok.slice(0, -3) + 'y');
-  if (tok.length > 4 && tok.endsWith('es'))  out.push(tok.slice(0, -2));
-  if (tok.length > 3 && tok.endsWith('s'))   out.push(tok.slice(0, -1));
-  return out;
-};
+      than the one being fixed because it is invisible.
 
-/* Name AND every variant SKU in one string, so a customer can type a bare SKU
-   and a customer can type a product name, and neither needs to know which
-   field they are searching. */
-const hay = p => (p.name + ' ' + p.variants.map(v => v.sku || '').join(' ')).toLowerCase();
+   ⚠ MOVED 15 Sep 2026. The implementation now lives in assets/js/search.js and
+   this file DELEGATES to it, because the header autocomplete needs the same
+   matcher and two copies would drift. A dropdown that offers a product the
+   grid then refuses to show is a lie the customer cannot diagnose.
 
-const tokenise = term => term.toLowerCase().split(/\s+/).filter(Boolean);
+   search.js is emitted before shop.js by foot() in build-shop-pages.py and by
+   index.html. The fallback below is not defensive padding · it is what keeps
+   the shop grid working if search.js ever fails to load, and it is the one
+   place a second copy of this logic is allowed to exist. */
+const _S = () => window.TLNSearch;
+
+const tokenise = term => _S()
+  ? _S().tokenise(term)
+  : String(term || '').toLowerCase().split(/\s+/).filter(Boolean);
 
 const productMatches = (p, toks) => {
-  const h = hay(p);
-  return toks.every(t => stems(t).some(s => h.includes(s)));
+  if (_S()) return _S().productMatches(p, toks);
+  const h = (p.name + ' ' + p.variants.map(v => v.sku || '').join(' ')).toLowerCase();
+  return toks.every(t => h.includes(t));
 };
 
 /* --- catalogue ---------------------------------------------------------- */
@@ -669,8 +671,12 @@ function hydrateTools(tools) {
       const wide = Catalogue.all().filter(matches).length;
       const here = scopeNames.length === 1 ? esc(scopeNames[0]) : 'this category';
       empty = wide
+        /* Root-relative `/shop`, not `${prefix}shop.html`. The .html spelling
+           works but eats a 308 to the extensionless URL on every click, and
+           this link is emitted from pages at two different depths. Matches the
+           header form's action and the suggestions' hrefs. */
         ? `<p class="shop-empty">Nothing in ${here} matches “${esc(term)}”.
-             <a class="ulink" href="${prefix}shop.html?q=${encodeURIComponent(term)}"
+             <a class="ulink" href="/shop?q=${encodeURIComponent(term)}"
              >${wide} match${wide === 1 ? '' : 'es'} in the whole store →</a></p>`
         : `<p class="shop-empty">Nothing in the store matches “${esc(term)}”.</p>`;
     }

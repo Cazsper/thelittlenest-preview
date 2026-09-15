@@ -213,6 +213,10 @@ ul { list-style: none; margin: 0; padding: 0; }
 .wordmark-text--lg i { font-size: 16px; }
 
 .header__actions { display: flex; gap: 16px; align-items: center; justify-content: flex-end; }
+/* Sign In + Nest as ONE unit. See the markup note: below 1100px
+   `.header__actions` becomes `display: contents` and this wrapper is what
+   keeps the pair together in column 3 instead of fighting for one cell. */
+.header__btns { display: flex; gap: 16px; align-items: center; }
 .account {
   font-family: var(--caps);
   font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
@@ -414,31 +418,177 @@ ul { list-style: none; margin: 0; padding: 0; }
 .hero h1 em { font-style: italic; font-weight: 300; color: var(--grey); }
 .hero__cta { display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap; }
 
-/* ── Whole-store search, homepage hero ───────────────────────────────────
-   SELF-CONTAINED ON PURPOSE. The input carries `.shop-search` so it reads as
-   the same control as the one on shop.html, but index.html loads tln.css and
-   NOT shop.css, so every rule that box needs is restated here. Styling it by
-   leaning on `.shop-search` would have looked correct in the editor and shipped
-   an unstyled input to the homepage.
+/* ── SITE SEARCH · two locations, one behaviour ──────────────────────────
+   Added 15 Sep 2026 on Cazsper's instruction, replacing the hero box that
+   shipped that morning.
 
-   `flex: 1 1 220px` on the field and `flex-wrap` on the form: below roughly
-   420px the button drops to its own line instead of squeezing the input to
-   nothing. The 16px font size is the iOS Safari rule · anything smaller and
-   Safari zooms the page on focus and never zooms back out. */
-.hero__find {
-  display: flex; gap: 10px; flex-wrap: wrap;
-  margin-top: 20px; max-width: 460px;
+     .hdr-find    in the header, left of Sign In, on EVERY page
+     .home-find   a band under the header's bottom border, HOMEPAGE only
+     .tln-sugg    the suggestions dropdown, shared by both
+
+   All of it lives in tln.css rather than shop.css because the header is on all
+   275 pages and index.html loads tln.css ONLY. Putting any of it in shop.css
+   would have looked right on the shop page and shipped an unstyled input to the
+   homepage, about, contact and policies.
+
+   16px on every input is the iOS Safari rule: anything smaller and Safari zooms
+   the page on focus and never zooms back out. It is why the header field is
+   sized with padding and width rather than with a smaller font. */
+
+.hdr-find { position: relative; display: flex; }
+.hdr-find__in {
+  width: 170px; min-width: 0;
+  font-family: var(--body); font-size: 16px; color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--grey-line);
+  padding: 7px 12px; min-height: 38px;
+  transition: border-color 180ms ease;
 }
-.hero__find .shop-search {
-  flex: 1 1 220px; min-width: 0;
+.hdr-find__in::placeholder { color: var(--grey); }
+/* NO width change on focus. Growing the field reflowed the whole header row and
+   nudged Sign In and Nest sideways under the cursor. The dropdown is already
+   wider than the field, so the extra room is where it is actually needed. */
+.hdr-find__in:focus { outline: none; border-color: var(--ink); }
+
+/* ⚠ BOTH OF THESE ARE REGRESSION FIXES, measured at 1024px the first time the
+   header search went in, and neither is cosmetic:
+
+   1. The wordmark column is `auto` between two `1fr` columns, so when the two
+      outer columns overflow it is the LOGO that absorbs it. Measured width went
+      to EXACTLY 0px · the brand mark vanished from the header and nothing
+      errored. `flex-shrink: 0` plus a min-width stops the grid taking it.
+   2. "Sign In" wrapped to "SIGN / IN", making `.account` 54px tall against the
+      Nest button's 44px and visibly misaligning the row. */
+.header__inner > a[aria-label] { flex-shrink: 0; }
+.wordmark { min-width: 104px; }
+.account { white-space: nowrap; }
+.hdr-find__in { flex-shrink: 0; }
+
+/* ⚠ HIDDEN BELOW 980px, the same breakpoint that hides `.account`. Under that
+   width the header collapses to menu / logo / actions and a fourth control does
+   not fit on a 375px screen without a second row, which this layout has no
+   place for. The consequence is real and deliberate: on a phone, search is the
+   homepage band, the shop page's own filter box and each category page's filter
+   box. Product, about, contact and policies pages have no search on mobile. */
+/* ── Below 1100px: the search becomes its own full-width row ──────────────
+   REPLACES an earlier `display: none`, which was the lazy answer and left every
+   page below 1100px with no search at all except the shop and category filters.
+
+   WHY 1100 AND NOT THE 980 USED FOR `.account`: measured, not guessed. At
+   1024px the single-row header needs roughly nav 457 + logo 104 + search 170 +
+   Sign In 68 + Nest 109 + gaps 64 + padding 112, about 1084px against 1024
+   available, and the overflow lands on the logo · its measured width went to
+   exactly 0px. 1100px is where all five genuinely fit on one line.
+
+   HOW: `.header__actions` becomes `display: contents`, which removes its box
+   and promotes its children to grid items of `.header__inner`. The search can
+   then be placed on row 2 spanning every column, while `.header__btns` stays in
+   column 3 of row 1. No duplicated markup, no JavaScript, and therefore no
+   second input to keep in step and no duplicate ids.
+
+   `display: contents` is safe on this element specifically because it is a
+   plain div carrying no role and no semantics worth preserving. Do not extend
+   it to `<nav>`, `<header>` or anything with a landmark role.
+
+   EVERY grid item is placed explicitly. Auto-placement with two rows and a
+   promoted child put the wordmark on row 2 next to the search box the first
+   time this was written. */
+@media (max-width: 1099.98px) {
+  .header__inner {
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 24px;
+    row-gap: 12px;
+  }
+  .nav-toggle { grid-column: 1; grid-row: 1; }
+  .header__inner > nav.nav { grid-column: 1; grid-row: 1; }
+  .header__inner > a[aria-label] { grid-column: 2; grid-row: 1; }
+
+  .header__actions { display: contents; }
+  .header__btns { grid-column: 3; grid-row: 1; justify-content: flex-end; }
+
+  .hdr-find { grid-column: 1 / -1; grid-row: 2; display: flex; }
+  .hdr-find__in { width: 100%; flex: 1 1 auto; }
+  /* Full-bleed row, so the panel tracks the field rather than hugging the right
+     edge the way it does beside Sign In on desktop. */
+  .hdr-find .tln-sugg { left: 0; right: auto; min-width: 100%; max-width: 100%; }
+}
+
+/* ── The homepage band ─────────────────────────────────────────────────── */
+.home-find {
+  background: var(--paper);
+  border-bottom: 1px solid var(--grey-line);
+}
+.home-find__inner { padding-block: 18px; }
+.home-find__label {
+  display: block;
+  font-family: var(--caps);
+  font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 10px;
+}
+.home-find__form { position: relative; max-width: 560px; }
+.home-find__row { display: flex; gap: 10px; flex-wrap: wrap; }
+.home-find__in {
+  flex: 1 1 240px; min-width: 0;
   font-family: var(--body); font-size: 16px; color: var(--ink);
   background: transparent;
   border: 1px solid var(--grey-soft);
   padding: 12px 16px; min-height: 48px;
 }
-.hero__find .shop-search::placeholder { color: var(--grey); }
-.hero__find .shop-search:focus { outline: none; border-color: var(--ink); }
+.home-find__in::placeholder { color: var(--grey); }
+.home-find__in:focus { outline: none; border-color: var(--ink); }
 .btn--find { padding: 14px 24px; min-height: 48px; }
+
+/* ── Suggestions ───────────────────────────────────────────────────────────
+   z-index 40 clears the sticky header's 30. Without that the dropdown opened
+   BEHIND the header band on the homepage, where the two overlap by a few
+   pixels, and the first suggestion was unclickable.
+
+   Positioned against the FORM, so it lines up under the whole control rather
+   than under the input alone · on the homepage the row also holds a Search
+   button, and anchoring to the input made the panel sit visibly off-centre. */
+.tln-sugg {
+  position: absolute; z-index: 40;
+  top: calc(100% + 6px); left: 0;
+  min-width: 100%; max-width: 420px;
+  margin: 0; padding: 6px 0; list-style: none;
+  background: var(--paper);
+  border: 1px solid var(--grey-line);
+  box-shadow: 0 18px 40px rgba(28, 27, 23, 0.13);
+  max-height: 60vh; overflow-y: auto;
+}
+.hdr-find .tln-sugg { left: auto; right: 0; min-width: 300px; }
+
+.tln-sugg__row a, .tln-sugg__all a {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 10px 16px;
+}
+.tln-sugg__row a:hover, .tln-sugg__row.is-active a {
+  background: var(--shiplap, rgba(28, 27, 23, 0.05));
+}
+.tln-sugg__name {
+  font-family: var(--body); font-size: 14px; color: var(--ink);
+  line-height: 1.35;
+}
+.tln-sugg__price {
+  font-family: var(--body); font-size: 12px; color: var(--grey);
+  white-space: nowrap;
+}
+.tln-sugg__none {
+  padding: 12px 16px;
+  font-family: var(--body); font-size: 13px; color: var(--grey);
+}
+.tln-sugg__all { border-top: 1px solid var(--grey-line); margin-top: 6px; padding-top: 2px; }
+.tln-sugg__all a {
+  font-family: var(--caps);
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink);
+}
+.tln-sugg__all a:hover, .tln-sugg__all.is-active a {
+  background: var(--shiplap, rgba(28, 27, 23, 0.05));
+}
+
 .hero__caption {
   font-family: var(--serif); font-style: italic;
   font-size: 18px; line-height: 1.5; color: var(--grey);

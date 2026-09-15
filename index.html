@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tln.css?v=a5b62cd7">
+<link rel="stylesheet" href="assets/tln.css?v=c457a699">
 
 </head>
 
@@ -51,15 +51,37 @@
     </a>
 
     <div class="header__actions">
+
+      <form class="hdr-find" data-tln-search role="search" method="get" action="/shop">
+        <input class="hdr-find__in" type="search" name="q"
+               placeholder="Search products"
+               aria-label="Search all products by name or SKU">
+      </form>
       
-      <a class="account" href="admin/">Sign In</a>
-      <a class="cart" href="cart.html">
-        Nest
-        <span class="cart__count" data-cart-count>0</span>
-      </a>
+      <div class="header__btns">
+        <a class="account" href="admin/">Sign In</a>
+        <a class="cart" href="cart.html">
+          Nest
+          <span class="cart__count" data-cart-count>0</span>
+        </a>
+      </div>
     </div>
   </div>
 </header>
+
+<div class="home-find">
+  <div class="container home-find__inner">
+    <form class="home-find__form" data-tln-search role="search" method="get" action="/shop">
+      <label class="home-find__label" for="home-q">Search the whole store</label>
+      <div class="home-find__row">
+        <input class="home-find__in" id="home-q" type="search" name="q"
+               placeholder="Search by product name or SKU"
+               aria-label="Search all products by name or SKU">
+        <button class="btn btn--find" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <main id="main">
 
@@ -73,12 +95,6 @@
           <a data-cms-link="home.hero.cta_secondary" class="btn btn--ghost" href="about.html">Our Standard</a>
         </div>
 
-        <form class="hero__find" role="search" method="get" action="shop.html">
-          <input class="shop-search" type="search" name="q"
-                 placeholder="Search by name or SKU"
-                 aria-label="Search all products by name or SKU">
-          <button class="btn btn--find" type="submit">Search</button>
-        </form>
       </div>
 
       <div>
@@ -326,6 +342,8 @@
 </footer>
 
 <script src="assets/tln.js?v=afb8c600"></script>
+
+<script src="assets/js/search.js"></script>
 <script src="assets/js/analytics.js"></script>
 </body>
 </html>

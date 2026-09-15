@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/tln.css?v=a5b62cd7">
+<link rel="stylesheet" href="../assets/tln.css?v=c457a699">
 <link rel="stylesheet" href="../assets/shop.css?v=d3ed0fb1">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "DreamGreen 'Bliss' Pillow - 1000grm", "category": "Pillows", "brand": {"@type": "Brand", "name": "The Little Nest"}, "sku": "BD2970", "offers": {"@type": "AggregateOffer", "priceCurrency": "NZD", "lowPrice": 57.0, "highPrice": 57.0, "offerCount": 1}}</script>
 
@@ -49,9 +49,17 @@
            alt="The Little Nest" width="912" height="296" fetchpriority="high" decoding="async">
     </a>
     <div class="header__actions">
+
+      <form class="hdr-find" data-tln-search role="search" method="get" action="/shop">
+        <input class="hdr-find__in" type="search" name="q"
+               placeholder="Search products"
+               aria-label="Search all products by name or SKU">
+      </form>
       
-      <a class="account" href="../admin/">Sign In</a>
-      <a class="cart" href="../cart.html">Nest <span class="cart__count" data-cart-count>0</span></a>
+      <div class="header__btns">
+        <a class="account" href="../admin/">Sign In</a>
+        <a class="cart" href="../cart.html">Nest <span class="cart__count" data-cart-count>0</span></a>
+      </div>
     </div>
   </div>
 </header>
@@ -168,7 +176,9 @@
 </footer>
 
 <script src="../assets/tln.js?v=afb8c600"></script>
-<script src="../assets/js/shop.js?v=cbaf35f1"></script>
+
+<script src="../assets/js/search.js?v=5641251f"></script>
+<script src="../assets/js/shop.js?v=4c71ee21"></script>
 <script src="../assets/js/analytics.js?v=9d51a12d"></script>
 </body>
 </html>
