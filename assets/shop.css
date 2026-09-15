@@ -437,4 +437,10 @@
 @media (prefers-reduced-motion: no-preference) {
   .prod-thumb { transition: opacity .15s ease; }
   .prod-thumb:hover { opacity: .82; }
+  /* The same hover zoom every other photograph on the site got on 11 Sep 2026.
+     These thumbnails sit outside `.ph`, so the site-wide rule in tln.css does
+     not reach them and they need saying again here. The opacity cue stays: it
+     is what marks the thumbnail as a control rather than as an image. */
+  .prod-thumb img { transition: transform 600ms cubic-bezier(.2,.6,.2,1); }
+  .prod-thumb:hover img { transform: scale(1.04); }
 }

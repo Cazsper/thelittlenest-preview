@@ -284,6 +284,44 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .ph.has-img > .ph__cap { display: none; }
 
+/* HOVER ZOOM ON PHOTOGRAPHY, SITE-WIDE. Cazsper, 11 Sep 2026: he liked the
+   effect the shop category tiles already had and asked for it on every photo.
+   Deliberately the SAME 1.04 and the SAME 600ms curve as .shop-cat in shop.css,
+   so the site reads as one gesture rather than two that nearly match.
+
+   `.ph` already sets overflow:hidden. That is what clips the zoom, and it is
+   why this belongs on .ph rather than on the images themselves.
+
+   WHY THE SELECTOR IS A CLASS AND NOT A LIST OF PAGES: most photography on this
+   site does not exist at build time. shop.js builds the grid tiles client side
+   and the edge injects CMS photographs, and both add `has-img` along with the
+   image. A rule on the class therefore covers every photo that ever appears,
+   including products added long after this was written.
+
+   THE LOGO IS DELIBERATELY EXCLUDED. It is `.wordmark` in the header and the
+   footer, it is never inside `.ph`, and a wordmark that moves on hover reads as
+   a fault rather than as polish.
+
+   Four selectors because a photo is hovered in four different ways here: on its
+   own (the product page image and the editorial pairs), inside a link (shop
+   tiles, related products), inside `.card` (an <article> on the homepage whose
+   anchor is a child, so `a:hover` alone would miss it when the cursor is on the
+   card's text), and inside `.shop-tile`.
+
+   Guarded on prefers-reduced-motion, matching .prod-thumb in shop.css. With
+   reduced motion the photograph simply does not move. */
+@media (prefers-reduced-motion: no-preference) {
+  .ph.has-img img {
+    transition: transform 600ms cubic-bezier(.2,.6,.2,1);
+  }
+  .ph.has-img:hover img,
+  a:hover .ph.has-img img,
+  .card:hover .ph.has-img img,
+  .shop-tile:hover .ph.has-img img {
+    transform: scale(1.04);
+  }
+}
+
 /* Ratio utilities. WHICH ONE GOES WHERE WAS DECIDED BY PATRICK ON THE CALL OF
    17 Aug 2026, and the rule is short enough to keep here:
      · r-3-2  the homepage hero at the very top. "Three to two at the top."
@@ -375,6 +413,32 @@ ul { list-style: none; margin: 0; padding: 0; }
 }
 .hero h1 em { font-style: italic; font-weight: 300; color: var(--grey); }
 .hero__cta { display: flex; gap: 12px; margin-top: 40px; flex-wrap: wrap; }
+
+/* ── Whole-store search, homepage hero ───────────────────────────────────
+   SELF-CONTAINED ON PURPOSE. The input carries `.shop-search` so it reads as
+   the same control as the one on shop.html, but index.html loads tln.css and
+   NOT shop.css, so every rule that box needs is restated here. Styling it by
+   leaning on `.shop-search` would have looked correct in the editor and shipped
+   an unstyled input to the homepage.
+
+   `flex: 1 1 220px` on the field and `flex-wrap` on the form: below roughly
+   420px the button drops to its own line instead of squeezing the input to
+   nothing. The 16px font size is the iOS Safari rule · anything smaller and
+   Safari zooms the page on focus and never zooms back out. */
+.hero__find {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-top: 20px; max-width: 460px;
+}
+.hero__find .shop-search {
+  flex: 1 1 220px; min-width: 0;
+  font-family: var(--body); font-size: 16px; color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--grey-soft);
+  padding: 12px 16px; min-height: 48px;
+}
+.hero__find .shop-search::placeholder { color: var(--grey); }
+.hero__find .shop-search:focus { outline: none; border-color: var(--ink); }
+.btn--find { padding: 14px 24px; min-height: 48px; }
 .hero__caption {
   font-family: var(--serif); font-style: italic;
   font-size: 18px; line-height: 1.5; color: var(--grey);

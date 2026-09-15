@@ -1499,8 +1499,15 @@ async function renderProducts() {
 
       body.append(fRich(
         { label: 'Description', kind: 'richtext', blocks: true,
-          help: 'Shown on the product page. There are no descriptions today, so '
-              + 'anything here is new copy.' },
+          /* CORRECTED 9 Sep 2026. This used to say "There are no descriptions
+             today, so anything here is new copy", which was true when it was
+             written and became wrong on 1 Sep when all 141 went live. It told an
+             editor the box should be empty when in fact it is pre-filled from
+             the draft, which invites pasting over approved copy. */
+          help: 'Shown on the product page. The current description is already '
+              + 'in the box below, so edit it in place. Clearing it falls back '
+              + 'to the description synced from Zoho, which for most products '
+              + 'is only the product name.' },
         `product.${p.key}.description`));
 
       /* The single photograph, kept because 33 products are live on it and the

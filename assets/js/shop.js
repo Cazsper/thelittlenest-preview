@@ -47,6 +47,53 @@ const money = n =>
 const esc = s => String(s ?? '').replace(/[&<>"]/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+/* --- product matching --------------------------------------------------- */
+
+/* REWRITTEN 15 Sep 2026. Search was one `haystack.includes(term)` call, which
+   made it silently, badly literal. Measured against the live catalogue:
+
+       "duvet cover"   1 result        "towel"    9 results
+       "duvet covers"  NOTHING         "towels"   NOTHING
+
+   The store's own category is called "Towels & Bathrobes" and typing "towels"
+   returned an empty grid. Steph Fisher reported this as "I was looking for
+   duvet covers and I could not find them" · she typed the plural, which is
+   what anyone types, and the store told her it had none. The wrong-category
+   theory was only half of it: the plural alone was enough to empty the page.
+
+   Two changes, both deliberate:
+
+   1. TOKENS, NOT A SUBSTRING. Every word must appear somewhere in the
+      product's text, but no longer side by side and in order. "cover duvet"
+      and "duvet cover" now find the same product. Still AND, not OR, so
+      "duvet cover" does not drag in all 7 duvet inners.
+
+   2. EACH TOKEN MATCHES ITS OWN SINGULAR. The original spelling is tried
+      first, so an exact name or SKU match is never weakened; the stem is only
+      an extra chance to hit. Conservative on purpose: -ies/-es/-s, minimum
+      lengths, no stemmer. Over-stemming ("slip" -> "sli") would start
+      matching things a customer did not ask for, which is a worse failure
+      than the one being fixed because it is invisible. */
+const stems = tok => {
+  const out = [tok];
+  if (tok.length > 4 && tok.endsWith('ies')) out.push(tok.slice(0, -3) + 'y');
+  if (tok.length > 4 && tok.endsWith('es'))  out.push(tok.slice(0, -2));
+  if (tok.length > 3 && tok.endsWith('s'))   out.push(tok.slice(0, -1));
+  return out;
+};
+
+/* Name AND every variant SKU in one string, so a customer can type a bare SKU
+   and a customer can type a product name, and neither needs to know which
+   field they are searching. */
+const hay = p => (p.name + ' ' + p.variants.map(v => v.sku || '').join(' ')).toLowerCase();
+
+const tokenise = term => term.toLowerCase().split(/\s+/).filter(Boolean);
+
+const productMatches = (p, toks) => {
+  const h = hay(p);
+  return toks.every(t => stems(t).some(s => h.includes(s)));
+};
+
 /* --- catalogue ---------------------------------------------------------- */
 
 const Catalogue = {
@@ -527,6 +574,15 @@ function hydrateTools(tools) {
   const sort  = tools.querySelector('[data-sort]');
   if (!grid) return;
 
+  /* ?q= FROM THE HOMEPAGE, added 15 Sep 2026. The hero form on index.html is a
+     plain GET form pointing at this page, so the term arrives in the URL and
+     has to be put into the box and painted by hand · nothing else reads it.
+
+     Seeded BEFORE the listeners below are wired, so the first paint is the one
+     triggered at the bottom of this function rather than an extra one here. */
+  const urlQ = new URLSearchParams(location.search).get('q');
+  if (urlQ && q) q.value = urlQ;
+
   /* shop.html only. Category pages name themselves with an <h1>. */
   const head  = document.querySelector('[data-grid-head]');
 
@@ -545,21 +601,25 @@ function hydrateTools(tools) {
        returns undefined for a typo, and reading .name off it used to throw and
        leave the page with a permanently empty grid and no error a customer
        could act on. Names, not slugs, because that is what `p.cat` holds. */
-    let list;
+    let list, scopeNames = [];
     if (scope === 'all') {
       list = Catalogue.all().slice();
     } else {
-      const names = scope.split(',')
+      scopeNames = scope.split(',')
         .map(sl => Catalogue.cat(sl.trim()))
         .filter(Boolean)
         .map(c => c.name);
-      const want = new Set(names);
+      const want = new Set(scopeNames);
       list = Catalogue.all().filter(p => want.has(p.cat));
     }
 
-    if (term) list = list.filter(p =>
-      p.name.toLowerCase().includes(term) ||
-      p.variants.some(v => (v.sku || '').toLowerCase().includes(term)));
+    /* One predicate, used for the in-scope filter AND for the whole-store count
+       in the empty state below. They were two copies of the same expression for
+       about an hour and that is exactly how the two numbers drift apart. */
+    const toks    = tokenise(term);
+    const matches = p => productMatches(p, toks);
+
+    if (term) list = list.filter(matches);
 
     const s = sort?.value || 'featured';
     let html;
@@ -589,9 +649,33 @@ function hydrateTools(tools) {
       html = list.map(p => tile(p, prefix)).join('');
     }
 
-    grid.innerHTML = list.length
-      ? html
-      : '<p class="shop-empty">Nothing matches that search.</p>';
+    /* THE DEAD END, fixed 15 Sep 2026 on Steph Fisher's report: "if you go into
+       Beds and Mattresses and search duvet covers, it doesn't bring up
+       anything ... a customer needs to be able to search the whole site."
+
+       A category page's search has always filtered that category and only that
+       category, which is correct behaviour and a terrible outcome: the customer
+       who guesses the wrong category is told the store does not stock the thing,
+       when in fact it is one category along. Steph hit this looking for duvet
+       covers · the only one is filed under Bedding & Quilts while the Bed Linen
+       blurb advertises "duvet covers".
+
+       So when a scoped search finds nothing, count the whole store before
+       giving up, and hand over a real link rather than advice. The count is
+       computed from the SAME predicate as the filter above. If the store truly
+       has none, say so plainly and do not offer a link to an empty result. */
+    let empty = '<p class="shop-empty">Nothing matches that search.</p>';
+    if (term && scope !== 'all') {
+      const wide = Catalogue.all().filter(matches).length;
+      const here = scopeNames.length === 1 ? esc(scopeNames[0]) : 'this category';
+      empty = wide
+        ? `<p class="shop-empty">Nothing in ${here} matches “${esc(term)}”.
+             <a class="ulink" href="${prefix}shop.html?q=${encodeURIComponent(term)}"
+             >${wide} match${wide === 1 ? '' : 'es'} in the whole store →</a></p>`
+        : `<p class="shop-empty">Nothing in the store matches “${esc(term)}”.</p>`;
+    }
+
+    grid.innerHTML = list.length ? html : empty;
     if (count) count.textContent =
       list.length + (list.length === 1 ? ' product' : ' products');
     /* MIRRORS SHOP_HEADS in build-shop-pages.py. A grid sorted by price under a
@@ -619,7 +703,19 @@ function hydrateTools(tools) {
      published through /admin is invisible until something repaints. Both flags
      are absent unless the edge actually substituted, so a site with nothing
      published still pays nothing. */
-  if (Catalogue.hasOverrides() || Order.hasOverrides()) paint();
+  if (Catalogue.hasOverrides() || Order.hasOverrides() || urlQ) paint();
+
+  /* Arriving with a term MUST move the viewport. On shop.html the search box
+     and the grid sit below eight full-bleed category cards, so a customer who
+     searched "duvet cover" on the homepage would land at the top of an
+     apparently unchanged shop page and conclude the search did nothing. The
+     results are there · they are simply a screen and a half down.
+
+     `q` rather than `grid`, so the customer can see the term that produced the
+     results and edit it. Guarded on urlQ so a normal visit to shop.html is
+     untouched, and 'auto' rather than 'smooth' because this is where the page
+     starts, not somewhere it travels to. */
+  if (urlQ && q) q.scrollIntoView({ block: 'center', behavior: 'auto' });
 
   /* The hero search proxy that used to live here was REMOVED on 17 Aug 2026.
      It was a second search field at the top of shop.html that mirrored its
