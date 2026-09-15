@@ -1215,18 +1215,46 @@ async function checkNewProducts(btn) {
   const say = (msg) => { if (status) status.textContent = msg; };
 
   busy(btn, true);
-  say('Asking Zoho what products it has, and checking each one…');
+  say('Asking Zoho what products it has…');
   if (list) list.innerHTML = '';
 
   try {
-    const r = await call('/api/admin/zoho/new-products');
-    const found = r.products || [];
+    /* ⚠ THE BROWSER DRIVES THE LOOP. A single server-side walk of all 92 Zoho
+       products returned 502: a Worker gets ~50 subrequests per request and that
+       walk needs several times more. Same contract as the price sync above. */
+    const { ids, count } = await call('/api/admin/zoho/ids');
 
-    if (!found.length) {
-      say(`Checked ${r.checked} products in Zoho. Everything in Zoho is already `
-        + 'on the website · there is nothing new to bring over.');
+    const found = [];
+    const failed = [];
+    let size = 10;
+    for (let i = 0; i < ids.length; i += size) {
+      say(`Checking Zoho products, ${Math.min(i + size, ids.length)} of ${count}…`);
+      const r = await call('/api/admin/zoho/new-products', {
+        method: 'POST', body: { ids: ids.slice(i, i + size) },
+      });
+      size = Math.max(1, Number(r.batch) || size);
+      found.push(...(r.products || []));
+      failed.push(...(r.failed || []));
+    }
+
+    /* A partial read must never be shown as "nothing new". Steph would take an
+       empty list as proof her product was already across. */
+    if (failed.length) {
+      say('');
+      toast(`${failed.length} product${failed.length === 1 ? '' : 's'} could not be `
+        + 'read from Zoho, so this list would be incomplete. Nothing was changed. '
+        + 'Please try again in a few minutes.', true);
       return;
     }
+
+    if (!found.length) {
+      say(`Checked ${count} products in Zoho. Everything in Zoho is already on `
+        + 'the website · there is nothing new to bring over.');
+      return;
+    }
+
+    found.sort((a, b) => Number(b.ready) - Number(a.ready)
+      || String(a.name).localeCompare(String(b.name)));
 
     const ready = found.filter((p) => p.ready);
     const blocked = found.filter((p) => !p.ready);
@@ -1241,7 +1269,7 @@ async function checkNewProducts(btn) {
       if (p.ready) {
         return `<div class="card" style="margin-top:12px">
           <div class="card__body">
-            <p>✓ ${head}</p>
+            <p>&#10003; ${head}</p>
             <p class="hint">Ready to bring over. It has been checked all the way
               through to Zoho's checkout, so it can actually be bought.</p>
             <p class="hint"><b>It is not on the website yet.</b> Cazsper needs to
@@ -1250,14 +1278,14 @@ async function checkNewProducts(btn) {
       }
       return `<div class="card" style="margin-top:12px">
         <div class="card__body">
-          <p>✗ ${head}</p>
+          <p>&#10007; ${head}</p>
           <p class="hint">Not ready yet. Fix this in Zoho, then press the button
             again:</p>
           <ul class="hint">${p.blockers.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>
         </div></div>`;
     }).join('');
 
-    const bits = [`Checked ${r.checked} products in Zoho.`];
+    const bits = [`Checked ${count} products in Zoho.`];
     if (ready.length) {
       bits.push(`${ready.length} ready to bring over `
         + `(${ready.map((p) => p.name).join(', ')}). `
