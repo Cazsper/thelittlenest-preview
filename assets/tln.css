@@ -423,8 +423,11 @@ ul { list-style: none; margin: 0; padding: 0; }
    shipped that morning.
 
      .hdr-find    in the header, left of Sign In, on EVERY page
-     .home-find   a band under the header's bottom border, HOMEPAGE only
-     .tln-sugg    the suggestions dropdown, shared by both
+     .tln-sugg    the suggestions dropdown
+
+   The homepage band that sat under the header line was REMOVED on Cazsper's
+   instruction, 15 Sep 2026, the same day it went in. The header box is the one
+   search location now. Its markup is in git if it is ever wanted back.
 
    All of it lives in tln.css rather than shop.css because the header is on all
    275 pages and index.html loads tln.css ONLY. Putting any of it in shop.css
@@ -437,13 +440,20 @@ ul { list-style: none; margin: 0; padding: 0; }
 
 .hdr-find { position: relative; display: flex; }
 .hdr-find__in {
-  width: 170px; min-width: 0;
+  width: 210px; min-width: 0;
   font-family: var(--body); font-size: 16px; color: var(--ink);
   background: transparent;
   border: 1px solid var(--grey-line);
-  padding: 7px 12px; min-height: 38px;
+  padding: 7px 14px; min-height: 38px;
   transition: border-color 180ms ease;
 }
+/* WebKit reserves room inside a type="search" field for its own clear button,
+   which is NOT in the box model. The placeholder measured as fitting with 12px
+   to spare and still read as cramped, because that spare was underneath the
+   clear affordance. Hiding it costs nothing · Escape still clears the field and
+   the suggestions close with it. */
+.hdr-find__in::-webkit-search-cancel-button,
+.hdr-find__in::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
 .hdr-find__in::placeholder { color: var(--grey); }
 /* NO width change on focus. Growing the field reflowed the whole header row and
    nudged Sign In and Nest sideways under the cursor. The dropdown is already
@@ -474,11 +484,16 @@ ul { list-style: none; margin: 0; padding: 0; }
    REPLACES an earlier `display: none`, which was the lazy answer and left every
    page below 1100px with no search at all except the shop and category filters.
 
-   WHY 1100 AND NOT THE 980 USED FOR `.account`: measured, not guessed. At
-   1024px the single-row header needs roughly nav 457 + logo 104 + search 170 +
-   Sign In 68 + Nest 109 + gaps 64 + padding 112, about 1084px against 1024
-   available, and the overflow lands on the logo · its measured width went to
-   exactly 0px. 1100px is where all five genuinely fit on one line.
+   WHY 1140 AND NOT THE 980 USED FOR `.account`: measured, not guessed, twice.
+   The overflow lands on the LOGO · its measured width went to exactly 0px the
+   first time this was built, with no error anywhere.
+
+   1100px was correct while the search field was 170px wide. The field was
+   widened to 210px on 15 Sep 2026 because "Search products" rendered hard
+   against the right edge, and a sweep from 1080 to 1240 in 10px steps then
+   showed the single-row header overflowing at 1100 and 1120 and clean from
+   1140. So this number is a FUNCTION OF THE FIELD WIDTH: change
+   `.hdr-find__in` and re-run that sweep, do not assume this still holds.
 
    HOW: `.header__actions` becomes `display: contents`, which removes its box
    and promotes its children to grid items of `.header__inner`. The search can
@@ -493,7 +508,7 @@ ul { list-style: none; margin: 0; padding: 0; }
    EVERY grid item is placed explicitly. Auto-placement with two rows and a
    promoted child put the wordmark on row 2 next to the search box the first
    time this was written. */
-@media (max-width: 1099.98px) {
+@media (max-width: 1139.98px) {
   .header__inner {
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto auto;
@@ -513,32 +528,6 @@ ul { list-style: none; margin: 0; padding: 0; }
      edge the way it does beside Sign In on desktop. */
   .hdr-find .tln-sugg { left: 0; right: auto; min-width: 100%; max-width: 100%; }
 }
-
-/* ── The homepage band ─────────────────────────────────────────────────── */
-.home-find {
-  background: var(--paper);
-  border-bottom: 1px solid var(--grey-line);
-}
-.home-find__inner { padding-block: 18px; }
-.home-find__label {
-  display: block;
-  font-family: var(--caps);
-  font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
-  color: var(--grey);
-  margin-bottom: 10px;
-}
-.home-find__form { position: relative; max-width: 560px; }
-.home-find__row { display: flex; gap: 10px; flex-wrap: wrap; }
-.home-find__in {
-  flex: 1 1 240px; min-width: 0;
-  font-family: var(--body); font-size: 16px; color: var(--ink);
-  background: transparent;
-  border: 1px solid var(--grey-soft);
-  padding: 12px 16px; min-height: 48px;
-}
-.home-find__in::placeholder { color: var(--grey); }
-.home-find__in:focus { outline: none; border-color: var(--ink); }
-.btn--find { padding: 14px 24px; min-height: 48px; }
 
 /* ── Suggestions ───────────────────────────────────────────────────────────
    z-index 40 clears the sticky header's 30. Without that the dropdown opened
